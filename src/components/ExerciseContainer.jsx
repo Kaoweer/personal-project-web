@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import useProgramStore from "../stores/programStore";
 
 export default function ExerciseContainer(props) {
-  const { setProgram } = props;
+  const { setProgram,day } = props;
   const getExercise = useExerciseStore((state) => state.getExercise);
   const { programId } = useParams();
   const addExercise = useProgramStore((state) => state.addExercise);
@@ -60,9 +60,11 @@ export default function ExerciseContainer(props) {
                     type="button"
                     className="btn rounded-full border border-primary text-lg text-white w-[10px] h-[10px]"
                     onClick={async () => {
-                      await addExercise(programId, item.id);
+                      await addExercise(programId, item.id,`day=${day}`);
                       const addedExercise = await getProgram(programId);
-                      setProgram((prv) => addedExercise);
+                      const newProgram = await getProgram(programId,`day=${day}`)
+                      console.log(newProgram)
+                      setProgram(newProgram);
                       console.log();
                     }}
                   >

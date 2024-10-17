@@ -3,9 +3,9 @@ import { create } from "zustand";
 
 const useProgramStore = create((set, get) => ({
   exerciseArray: [],
-  addExercise: async (programId, exerciseId) => {
+  addExercise: async (programId, exerciseId,query) => {
     const result = await axios.post(
-      `http://localhost:8000/program/${programId}/${exerciseId}`
+      `http://localhost:8000/program/${programId}/${exerciseId}?${query}`
     );
   },
   getAllProgram: async () => {
@@ -16,10 +16,11 @@ const useProgramStore = create((set, get) => ({
     const response = await axios.get(`http://localhost:8000/program/get/${programId}`)
     return response
   },
-  getProgram : async (programId) => {
+  getProgram : async (programId,query) => {
+    console.log(programId,query)
     try {
       const response = await axios.get(
-        `http://localhost:8000/program/${programId}`
+        `http://localhost:8000/program/${programId}?${query}`
       );
         return response.data.sort((a, b) => a.orderPriority - b.orderPriority)
     } catch (err) {

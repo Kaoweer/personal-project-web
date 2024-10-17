@@ -5,6 +5,7 @@ import useProgramStore from "../stores/programStore";
 
 export default function WorkoutCard(props) {
   const {
+    day,
     index,
     program,
     setProgram,
@@ -19,6 +20,7 @@ export default function WorkoutCard(props) {
     programId,
   } = props;
   const getExercise = useExerciseStore((state) => state.getExercise);
+  const getProgram = useProgramStore((state) => state.getProgram);
   const [exerciseDetail, setExerciseDetail] = useState({});
   const [editCard, setEditCard] = useState({
     id: -1,
@@ -27,6 +29,7 @@ export default function WorkoutCard(props) {
     sets: -1,
   });
   const updateProgram = useProgramStore((state) => state.updateProgram);
+  const [debounceTimeout, setDebounceTimeout] = useState(null);
 
   useEffect(() => {
     if (Object.keys(exerciseDetail).length > 0) {
@@ -34,13 +37,24 @@ export default function WorkoutCard(props) {
     }
   }, [exerciseDetail]);
 
-  const hdlEditCard = (e) => {
+  const hdlEditCard = async (e) => {
     if (e.target.value == 0) {
       return;
     }
     console.log(index);
     const editingProgram = [...program];
     editingProgram[index][e.target.name] = e.target.value;
+
+    if (debounceTimeout) clearTimeout(debounceTimeout);
+
+    // Set a new timeout to update the program after 500ms of inactivity
+    setDebounceTimeout(
+      setTimeout(() => {
+        setProgram(editingProgram);
+        updateProgram(editingProgram, programId);
+      }, 500)
+    );
+
     setProgram(editingProgram);
     console.log(program);
   };
@@ -147,7 +161,7 @@ export default function WorkoutCard(props) {
           +
         </button> */}
         <button
-          onClick={() => {
+          onClick={async () => {
             console.log(id);
             hdlRemoveExercise(id);
           }}

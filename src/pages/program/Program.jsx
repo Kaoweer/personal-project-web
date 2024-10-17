@@ -16,6 +16,8 @@ export default function Program() {
   const getProgram = useProgramStore((state) => state.getProgram);
   const updateProgram = useProgramStore((state) => state.updateProgram);
   const updatePublicity = useProgramStore(state => state.updatePublicity)
+  const [day,setDay] = useState(1)
+  const [allday,setAllday] = useState(1)
   const navigate = useNavigate()
 
   // useEffect(() => {
@@ -40,7 +42,7 @@ export default function Program() {
   useEffect(() => {
     const fetchProgram = async () => {
       try {
-        const result = await getProgram(programId);
+        const result = await getProgram(programId,`day=1`);
         setProgram(result);
       } catch (err) {
         console.log(err);
@@ -51,7 +53,7 @@ export default function Program() {
 
   const hdlRemoveExercise = async (id) => {
     const res = await axios.delete(`http://localhost:8000/program/${id}`);
-    const updatedData = await getProgram(programId);
+    const updatedData = await getProgram(programId,`day=${day}`);
     setProgram(updatedData);
   };
 
@@ -65,6 +67,13 @@ export default function Program() {
     }
   };
 
+  const hdlAddDay = (n) => {
+    if (allday+n <= 0){
+      return
+    }
+    setAllday(prv => prv+n)
+  }
+
   return (
     <div className="h-screen">
       <div className="bg-neutral h-full px-4 pt-4">
@@ -76,6 +85,26 @@ export default function Program() {
             <li onClick={() => hdlChangPublicity(`${programDetail.id}`,'PUBLIC')}><a>Public</a></li>
             <li onClick={() => hdlChangPublicity(`${programDetail.id}`,'PERSONAL')}><a>Personal</a></li>
             <li onClick={() => hdlChangPublicity(`${programDetail.id}`,'PRIVATE')}><a>Private</a></li>
+          </ul>
+        </div>
+        <div className="block w-4/5 mx-auto min-w-[800px] dropdown">
+          <div tabIndex={0} role="button" className="w-full btn m-1">Day : {day}</div>
+          <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-fit p-2 shadow">
+            <div className="text-center">
+              <div className="flex">
+                <a className="btn" onClick={() => hdlAddDay(1)}>Add</a>
+                <a className="btn" onClick={() => hdlAddDay(-1)}>Remove</a>
+              </div>
+            </div>
+            {Array.from({ length: allday }, (_, i) => i + 1).map((item,index) => {
+              return (
+                <li key={index}><a className="text-center" onClick={async() => {
+                  setDay(item)
+                  const res = await getProgram(programId,`day=${item}`)
+                  setProgram(res)
+                  }}>{item}</a></li>
+              )
+            })}
           </ul>
         </div>
         <h1 className="text-center font-bold text-xl"></h1>
@@ -105,6 +134,7 @@ export default function Program() {
                     reps={el.reps}
                     sets={el.sets}
                     rest={el.rest}
+                    day={day}
                     hdlRemoveExercise={hdlRemoveExercise}
                   />
                 </Reorder.Item>
@@ -136,7 +166,7 @@ export default function Program() {
             >
               ✕
             </button>
-            <ExerciseContainer program={program} setProgram={setProgram} programId={programId} />
+            <ExerciseContainer day={day} program={program} setProgram={setProgram} programId={programId} />
           </div>
         </dialog>
       </div>
