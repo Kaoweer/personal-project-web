@@ -27,14 +27,13 @@ const useProgramStore = create((set, get) => ({
     }
   },
   updateProgram : async(workoutArray,programId) => {
+    console.log(workoutArray,programId)
     let body = []
-    console.log(workoutArray)
     workoutArray.forEach((item,index) => {
       item["orderPriority"] = index+1
       body.push(item)
     });
-    
-    console.log(workoutArray,body)
+  
     const result = await axios.patch(`http://localhost:8000/program/${programId}`,body)
     console.log(result)
   },
