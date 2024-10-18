@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import ExerciseDetailContainer from "./ExerciseDetailContainer";
 import useExerciseStore from "../stores/exerciseStore";
 import useProgramStore from "../stores/programStore";
+import useAuthStore from "../stores/authStore";
 
 export default function WorkoutCard(props) {
   const {
+    editing,
+    programDetail,
     day,
     index,
     program,
@@ -20,6 +23,7 @@ export default function WorkoutCard(props) {
     programId,
   } = props;
   const getExercise = useExerciseStore((state) => state.getExercise);
+  const user = useAuthStore((state) => state.user);
   const getProgram = useProgramStore((state) => state.getProgram);
   const [exerciseDetail, setExerciseDetail] = useState({});
   const [editCard, setEditCard] = useState({
@@ -120,37 +124,47 @@ export default function WorkoutCard(props) {
             </div>
           </div>
           <div className="w-fit flex justify-center gap-4">
-            <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center">
               <div className="">reps</div>
-              <div>
+              {!editing ? (
+                <div>{program[index].reps}</div>
+              ) : (
                 <input
-                  className="rounded-md border text-center w-[3rem]"
+                  className="rounded-md max-w-fit border text-center w-[3rem]"
                   type="number"
-                  name="reps"
+                  name="sets"
                   value={program[index].reps}
                   onChange={(e) => hdlEditCard(e)}
                 />
-              </div>
+              )}
             </div>
             <div className="flex flex-col items-center">
               <div className="">sets</div>
-              <input
-                className="rounded-md max-w-fit border text-center w-[3rem]"
-                type="number"
-                name="sets"
-                value={program[index].sets}
-                onChange={(e) => hdlEditCard(e)}
-              />
+              {!editing ? (
+                <div>{program[index].sets}</div>
+              ) : (
+                <input
+                  className="rounded-md max-w-fit border text-center w-[3rem]"
+                  type="number"
+                  name="sets"
+                  value={program[index].sets}
+                  onChange={(e) => hdlEditCard(e)}
+                />
+              )}
             </div>
             <div className="flex flex-col items-center">
               <div className="">rest</div>
-              <input
-                className="rounded-md max-w-fit border text-center w-[3rem]"
-                type="number"
-                name="rest"
-                value={program[index].rest}
-                onChange={(e) => hdlEditCard(e)}
-              />
+              {!editing ? (
+                <div>{program[index].rest}</div>
+              ) : (
+                <input
+                  className="rounded-md max-w-fit border text-center w-[3rem]"
+                  type="number"
+                  name="rest"
+                  value={program[index].rest}
+                  onChange={(e) => hdlEditCard(e)}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -160,15 +174,19 @@ export default function WorkoutCard(props) {
         >
           +
         </button> */}
-        <button
-          onClick={async () => {
-            console.log(id);
-            hdlRemoveExercise(id);
-          }}
-          className="bg-primary border w-[50px]"
-        >
-          -
-        </button>
+        {!editing ? (
+          <></>
+        ) : (
+          <button
+            onClick={async () => {
+              console.log(id);
+              hdlRemoveExercise(id);
+            }}
+            className="bg-primary border w-[50px]"
+          >
+            -
+          </button>
+        )}
       </div>
 
       {/* {exerciseDetail.name} */}

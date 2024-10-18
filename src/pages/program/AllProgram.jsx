@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProgramCard from "../../components/ProgramCard";
 import useProgramStore from "../../stores/programStore";
+import CreateProgram from "../../components/CreateProgram";
 
 export default function AllProgram() {
   const [programs, setPrograms] = useState([]);
@@ -31,6 +32,7 @@ export default function AllProgram() {
       <div className="flex p-4 items-center">
         <h1 className="text-xl font-bold ">Recommended programs  </h1>
         <h1 className="text-xl font-bold text-gray-400">{programs.length}</h1>
+        <button className="btn btn-primary" onClick={() => document.getElementById("create-modal").showModal()}>+ Add your program</button>
       </div>
       <div className="flex flex-wrap gap-4 w-full h-full">
         {programs.map((item) => {
@@ -48,6 +50,21 @@ export default function AllProgram() {
           );
         })}
       </div>
+      <dialog id="create-modal" className="modal">
+          <div className="modal-box">
+            <button
+              type="button"
+              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+              onClick={(e) => {
+                e.target.closest("dialog").close();
+              }}
+            >
+              ✕
+            </button>
+            <CreateProgram setPrograms={setPrograms}/>
+          </div>
+        </dialog>
     </div>
+    
   );
 }

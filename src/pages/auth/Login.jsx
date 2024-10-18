@@ -1,7 +1,10 @@
+import { useState } from "react";
+import LoginContainer from "../../components/LoginContainer";
+
 export default function Login() {
   return (
-    <div>
-      Login
+    <div className="w-[500px] bg-red-300">
+      <LoginContainer/>
     </div>
   )
 }
