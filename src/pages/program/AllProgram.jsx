@@ -34,6 +34,7 @@ export default function AllProgram() {
         <h1 className="text-xl font-bold text-gray-400">{programs.length}</h1>
         <button className="btn btn-primary" onClick={() => document.getElementById("create-modal").showModal()}>+ Add your program</button>
       </div>
+      
       <div className="flex flex-wrap gap-4 w-full h-full">
         {programs.map((item) => {
           const tags = JSON.parse(item.tags);

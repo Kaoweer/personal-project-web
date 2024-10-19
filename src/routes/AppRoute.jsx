@@ -5,6 +5,7 @@ import Unautorization from "../pages/Unautorization";
 import PageNotFound from "../pages/PageNotFound";
 import Program from "../pages/program/Program";
 import AllProgram from "../pages/program/AllProgram";
+import UserHomePage from "../pages/user/userHomePage";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,14 @@ const router = createBrowserRouter([
     children : [
       {index : true,element : <AllProgram/>},
       {path : ":programId",element : <Program/>},
+      {path : '*',element : <PageNotFound/>}
+    ]
+  },
+  {
+    path : "/user",
+    children : [
+      // {index : true,element : <AllProgram/>},
+      {path : "home",element : <UserHomePage/>},
       {path : '*',element : <PageNotFound/>}
     ]
   },

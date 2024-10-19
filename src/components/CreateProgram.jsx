@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import useProgramStore from "../stores/programStore";
 import { useNavigate } from "react-router-dom";
+import useAuthStore from "../stores/authStore";
 
 export default function CreateProgram(props) {
   const navigate = useNavigate()
@@ -10,13 +11,14 @@ export default function CreateProgram(props) {
   });
   const createProgram = useProgramStore(state => state.createProgram)
   const getAllProgram = useProgramStore(state => state.getAllProgram)
+  const {token} = useAuthStore.getState()
 
   const hdlOnchange = (e) => {
     console.log(programDetail)
     setProgramDetail({ ...programDetail, [e.target.name]: e.target.value });
   };
   const hdlCreateProgram = async() => {
-    const newProgram = await createProgram('',programDetail.name)
+    const newProgram = await createProgram(token,programDetail.name)
     const allProgram = await getAllProgram()
     console.log(allProgram)
     console.log(newProgram)

@@ -1,8 +1,10 @@
 import axios from "axios";
 import { create } from "zustand";
+import useAuthStore from "./authStore";
 
 const useProgramStore = create((set, get) => ({
   exerciseArray: [],
+  isAllow : false,
   addExercise: async (programId, exerciseId,query) => {
     const result = await axios.post(
       `http://localhost:8000/program/${programId}/${exerciseId}?${query}`
@@ -65,13 +67,30 @@ const useProgramStore = create((set, get) => ({
     try {
       const createdProgram = await axios.post(`http://localhost:8000/program/`,{name : name},
         {
-          headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNzI5MTYxMTY0LCJleHAiOjE3MzE3NTMxNjR9.cwdlUFJ_0981eaS5MjYIhvixZc3gLnh7XNHHmFoeO0A` }
+          headers: { Authorization: `Bearer ${token}` }
         })
         console.log(createdProgram)
         return createdProgram
     } catch (err) {
       console.log(err)
     }
+  },
+  getPersonalProgram : async(token) => {
+    try {
+      const personalPrograms = await axios.get(`http://localhost:8000/program/personal`,{
+        headers : { Authorization: `Bearer ${token}` }
+      })
+      console.log(personalPrograms)
+      return(personalPrograms.data)
+    } catch (err) {
+      console.log((err))
+    }
+  },
+  getAllowUser : async(token,programId) => {
+    const allowedUser = await axios.get(`http://localhost:8000/program/allow/${programId}`,{
+      headers : { Authorization: `Bearer ${token}` }
+    })
+    set({isAllow : allowedUser && allowedUser.data.isAllowed})
   }
 }));
 

@@ -8,13 +8,14 @@ import useProgramStore from "../../stores/programStore";
 import ExerciseDetailContainer from "../../components/ExerciseDetailContainer";
 import { Reorder } from "framer-motion";
 import useAuthStore from "../../stores/authStore";
+import { h1 } from "framer-motion/client";
 
 export default function Program() {
   const [program, setProgram] = useState([]); // Initial state is an empty array
   const { programId } = useParams();
   const [programDetail, setProgramDetail] = useState({});
-  const [canEdit,setCanEdit] = useState(false)
-  const [editing,setEditing] = useState(false)
+  const [canEdit, setCanEdit] = useState(false);
+  const [editing, setEditing] = useState(false);
   const getProgramById = useProgramStore((state) => state.getProgramById);
   const getProgram = useProgramStore((state) => state.getProgram);
   const updateProgram = useProgramStore((state) => state.updateProgram);
@@ -22,10 +23,13 @@ export default function Program() {
   const removeProgramByDate = useProgramStore(
     (state) => state.removeProgramByDate
   );
+  const getAllowUser = useProgramStore((state) => state.getAllowUser);
+  const token = useAuthStore((state) => state.token);
   const user = useAuthStore((state) => state.user);
   const [day, setDay] = useState(1);
   const [allday, setAllday] = useState(1);
   const navigate = useNavigate();
+  const isAllow = useProgramStore((state) => state.isAllow);
 
   // useEffect(() => {
   //   console.log(program)
@@ -43,20 +47,27 @@ export default function Program() {
 
   useEffect(() => {
     fetchProgramDetail();
+    getAllowUser(token, programId);
   }, []);
 
   useEffect(() => {
     const fetchProgram = async () => {
       try {
         const result = await getProgram(programId, `day=1`);
-
+        if (programDetail?.authorId && user?.id) {
+          setCanEdit(user.id === programDetail.authorId);
+        }
         setProgram(result);
       } catch (err) {
         console.log(err);
       }
     };
-    fetchProgram();
-  }, []);
+
+    // Make sure programDetail is loaded before comparing
+    if (programDetail?.authorId) {
+      fetchProgram();
+    }
+  }, [programDetail]); // Make sure to include programDetail in the dependency array
 
   const hdlRemoveExercise = async (id) => {
     const res = await axios.delete(`http://localhost:8000/program/${id}`);
@@ -91,14 +102,19 @@ export default function Program() {
           Go back
         </h1>
         <h1 className="text-center font-bold text-xl">{programDetail.name}</h1>
-        <h1 className="text-center font-bold text-xl">{programDetail.authorId}</h1>
+        <h1 className="text-center font-bold text-xl">
+          {programDetail.authorId}
+        </h1>
         {canEdit ? (
-          <h1 className="text-center font-bold text-xl" onClick={() => setEditing(prv => !prv)}>
-            Edit
-          </h1>
-         ) : (
+          <input
+            onChange={() => setEditing((prv) => !prv)}
+            type="checkbox"
+            className="toggle"
+          />
+        ) : (
           <></>
-         )}
+        )}
+        <h1>{JSON.stringify(isAllow)}</h1>
 
         <div className="block w-4/5 mx-auto min-w-[800px] dropdown">
           <div tabIndex={0} role="button" className="w-full btn m-1">
@@ -187,7 +203,7 @@ export default function Program() {
             <div className="flex flex-col gap-2 mx-auto p-4 max-w-[800px]">
               {program.map((el, index) => {
                 return (
-                  <div>
+                  <div key={el.id}>
                     <WorkoutCard
                       index={index}
                       setProgram={setProgram}
@@ -228,7 +244,7 @@ export default function Program() {
                   >
                     <WorkoutCard
                       index={index}
-                      editing = {editing}
+                      editing={editing}
                       setProgram={setProgram}
                       programDetail={programDetail}
                       program={program}
