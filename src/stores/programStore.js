@@ -1,6 +1,7 @@
 import axios from "axios";
 import { create } from "zustand";
 import useAuthStore from "./authStore";
+import { toast } from "react-toastify";
 
 const useProgramStore = create((set, get) => ({
   exerciseArray: [],
@@ -87,10 +88,47 @@ const useProgramStore = create((set, get) => ({
     }
   },
   getAllowUser : async(token,programId) => {
-    const allowedUser = await axios.get(`http://localhost:8000/program/allow/${programId}`,{
+    const allowedUser = await axios.get(`http://localhost:8000/program/allow/user/${programId}`,{
       headers : { Authorization: `Bearer ${token}` }
     })
-    set({isAllow : allowedUser && allowedUser.data.isAllowed})
+    console.log(allowedUser)
+    return allowedUser.data
+  },
+  sendRequest : async(token,programId) => {
+    console.log(token,programId)
+    try {
+      const res = await axios.post(`http://localhost:8000/program/allow/${programId}`,{},{
+        headers : { Authorization: `Bearer ${token}` }
+      })
+      toast.success('Request sent')
+    } catch (err) {
+      console.log(err)
+      toast.error(JSON.stringify(err.response.data.err))
+    }
+  },
+  getRequests : async(token) => {
+    console.log(token)
+    try {
+      const res = await axios.get(`http://localhost:8000/program/allow/`,{
+        headers : { Authorization: `Bearer ${token}` }
+      })
+      console.log(res)
+      return res.data
+    } catch (err) {
+      console.log(err)
+      toast.error(JSON.stringify(err.response.data.err))
+    }
+  },
+  allowRequest : async(token,programId,userId) => {
+    console.log(token,programId,userId)
+    try {
+      const res = await axios.patch(`http://localhost:8000/program/allow/${programId}`,{userId : userId,"isAllowed" : true},{
+        headers : { Authorization: `Bearer ${token}` }
+      })
+      toast.success("Accepted request")
+    } catch (err) {
+      toast.error(JSON.stringify(err.response.data.err))
+    }
   }
 }));
 

@@ -132,7 +132,7 @@ export default function WorkoutCard(props) {
                 <input
                   className="rounded-md max-w-fit border text-center w-[3rem]"
                   type="number"
-                  name="sets"
+                  name="reps"
                   value={program[index].reps}
                   onChange={(e) => hdlEditCard(e)}
                 />

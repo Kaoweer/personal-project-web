@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function UserHomePage() {
   const user = useAuthStore((state) => state.user);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [selectStatus, setSelectStatus] = useState({
     PUBLIC: "active",
     PRIVATE: "",
@@ -17,8 +17,11 @@ export default function UserHomePage() {
   const getPersonalProgram = useProgramStore(
     (state) => state.getPersonalProgram
   );
+  const getRequests = useProgramStore((state) => state.getRequests);
   const [personalPrograms, setPersonalPrograms] = useState([]);
   const { token } = useAuthStore.getState();
+  const [allreQuest, setAllRequest] = useState([]);
+  const allowRequest = useProgramStore(state => state.allowRequest)
 
   const hdlClickProgram = (programId) => {
     navigate(`/program/${programId}`);
@@ -27,6 +30,8 @@ export default function UserHomePage() {
   const fetchData = async () => {
     const personalPrograms = await getPersonalProgram(token);
     setPersonalPrograms(personalPrograms);
+    const requests = await getRequests(token);
+    setAllRequest(requests);
   };
 
   const hdlSelectStatus = (e) => {
@@ -79,25 +84,44 @@ export default function UserHomePage() {
                 </button>
               </div>
               <div className="flex w-fit">
-              {personalPrograms.map((item) => {
-                if (item.status !== curStatus) {
-                  return <></>;
-                }
-                return (
-                  <div key={item.id} className="">
-                    <ProgramCard
-                      hdlClickProgram={() => hdlClickProgram(item.id)}
-                      name={item.name}
-                    />
-                    <h1 className="text-xl font-bold">{item.name}</h1>
-                    <h1>status : {item.status}</h1>
-                  </div>
-                );
-              })}
+                {personalPrograms.map((item) => {
+                  if (item.status !== curStatus) {
+                    return <></>;
+                  }
+                  return (
+                    <div key={item.id} className="">
+                      <ProgramCard
+                        hdlClickProgram={() => hdlClickProgram(item.id)}
+                        name={item.name}
+                      />
+                      <h1 className="text-xl font-bold">{item.name}</h1>
+                      <h1>status : {item.status}</h1>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
         </div>
+      </div>
+      {/* Request form other user */}
+      <div>
+        <div>Access Requests</div>
+        {allreQuest.map((el) => {
+          return (
+            <div key={el.id} className="flex justify-between">
+              <div className="justify-between bg-red-300 w-[500px]">
+                <span>{el.trainingProgram.name}</span>
+                <span>{el.user.username}</span>
+              </div>
+              <button onClick={() => {
+                console.log(el)
+                allowRequest(token,el.programId,el.userId)
+                }} className="btn">Accept</button>
+              <button className="btn">Decline</button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
