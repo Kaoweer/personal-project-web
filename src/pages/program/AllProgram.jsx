@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom";
 import ProgramCard from "../../components/ProgramCard";
 import useProgramStore from "../../stores/programStore";
 import CreateProgram from "../../components/CreateProgram";
+import useAuthStore from "../../stores/authStore";
 
 export default function AllProgram() {
   const [programs, setPrograms] = useState([]);
   const navigate = useNavigate();
   const getAllProgram = useProgramStore((state) => state.getAllProgram);
+  const token = useAuthStore((state) => state.token);
 
   useEffect(() => {
     const fetchProgram = async () => {
@@ -37,37 +39,53 @@ export default function AllProgram() {
                 Public programs {programs.length}
               </h1>
             </div>
-            <button
-              className="text-lg btn btn-primary rounded-full bg-transparent border-2"
-              onClick={() =>
-                document.getElementById("create-modal").showModal()
-              }
-            >
-              + Add your program
-            </button>
+            {token ? (
+              <button
+                className="text-lg btn btn-primary rounded-full bg-transparent border-2"
+                onClick={() =>
+                  document.getElementById("create-modal").showModal()
+                }
+              >
+                + Add your program
+              </button>
+            ) : (
+              <></>
+            )}
           </div>
 
           <div className="flex gap-2 items-center">
             <div className="dropdown">
-              <div tabIndex={0} role="button" className="text-sm btn m-1 bg-transparent border-transparent rounded-full">
+              <div
+                tabIndex={0}
+                role="button"
+                className="text-sm btn m-1 bg-transparent border-transparent rounded-full"
+              >
                 Equipment
               </div>
               <ul
                 tabIndex={0}
                 className=" dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
               >
-                <li><a>Body only</a></li>
+                <li>
+                  <a>Body only</a>
+                </li>
               </ul>
             </div>
             <div className="dropdown">
-              <div tabIndex={0} role="button" className="text-sm  btn m-1 bg-transparent border-transparent rounded-full">
+              <div
+                tabIndex={0}
+                role="button"
+                className="text-sm  btn m-1 bg-transparent border-transparent rounded-full"
+              >
                 Level
               </div>
               <ul
                 tabIndex={0}
                 className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
               >
-                <li><a>Body only</a></li>
+                <li>
+                  <a>Body only</a>
+                </li>
               </ul>
             </div>
             <input
@@ -87,6 +105,7 @@ export default function AllProgram() {
             return (
               <>
                 <ProgramCard
+                  className={"h-[300px] w-[300px]"}
                   id={item.id}
                   hdlClickProgram={hdlClickProgram}
                   name={item.name}

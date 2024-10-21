@@ -119,12 +119,14 @@ const useProgramStore = create((set, get) => ({
       toast.error(JSON.stringify(err.response.data.err))
     }
   },
-  allowRequest : async(token,programId,userId) => {
+  allowRequest : async(token,programId,userId,status) => {
     console.log(token,programId,userId)
     try {
-      const res = await axios.patch(`http://localhost:8000/program/allow/${programId}`,{userId : userId,"isAllowed" : true},{
+      const res = await axios.patch(`http://localhost:8000/program/allow/${programId}`,{userId : userId,"isAllowed" : status},{
         headers : { Authorization: `Bearer ${token}` }
       })
+      console.log(res.data)
+      return res.data
       toast.success("Accepted request")
     } catch (err) {
       toast.error(JSON.stringify(err.response.data.err))

@@ -3,11 +3,17 @@ import useAuthStore from "../stores/authStore";
 
 export default function Sidebar() {
   const user = useAuthStore((state) => state.user);
-  
+
   return (
     <div>
       <div className="p-4 flex flex-col gap-4">
         <div className="text-3xl text-pri font-extrabold">
+          <div className=" overflow-hidden w-full rounded-lg aspect-square shadow-xl">
+            <img
+              src="https://fitnessprogramer.com/wp-content/plugins/fitnessprogramer-ektra-ozellikler//assets/img/male.png"
+              alt=""
+            />
+          </div>
           <h1 className="text-center">
             Welcome back!
             <br />

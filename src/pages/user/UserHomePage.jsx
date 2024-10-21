@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useAuthStore from "../../stores/authStore";
 import useProgramStore from "../../stores/programStore";
-import { div } from "framer-motion/client";
 import ProgramCard from "../../components/ProgramCard";
 import { useNavigate } from "react-router-dom";
 
@@ -14,13 +13,11 @@ export default function UserHomePage() {
     PERSONAL: "",
   });
   const [curStatus, setCurStatus] = useState("PUBLIC");
-  const getPersonalProgram = useProgramStore(
-    (state) => state.getPersonalProgram
-  );
+  const getPersonalProgram = useProgramStore((state) => state.getPersonalProgram);
   const getRequests = useProgramStore((state) => state.getRequests);
-  const [personalPrograms, setPersonalPrograms] = useState([]);
   const { token } = useAuthStore.getState();
-  const [allreQuest, setAllRequest] = useState([]);
+  const [personalPrograms, setPersonalPrograms] = useState([]);
+  const [allRequests, setAllRequests] = useState([]);
   const allowRequest = useProgramStore((state) => state.allowRequest);
 
   const hdlClickProgram = (programId) => {
@@ -31,7 +28,7 @@ export default function UserHomePage() {
     const personalPrograms = await getPersonalProgram(token);
     setPersonalPrograms(personalPrograms);
     const requests = await getRequests(token);
-    setAllRequest(requests);
+    setAllRequests(requests);
   };
 
   const hdlSelectStatus = (e) => {
@@ -44,56 +41,120 @@ export default function UserHomePage() {
     setCurStatus(e.target.name);
   };
 
+  const toggleAccess = async (programId, userId, currentStatus) => {
+    const updatedRequest = await allowRequest(token, programId, userId,!currentStatus);
+    if (updatedRequest) {
+      // Update the local state for the request status
+      setAllRequests((prevRequests) =>
+        prevRequests.map((request) =>
+          request.userId === userId && request.programId === programId
+            ? { ...request, isAllowed: updatedRequest.isAllowed }
+            : request
+        )
+      );
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
 
   return (
     <div className="w-full">
-      <div className="w-full p-4">
-        <div className="flex flex-col gap-1 w-full">
-          <div className="collapse bg-base-100">
+      <div className="flex flex-col gap-4 p-4">
+        <div className="w-full">
+          <div className="w-full collapse bg-base-100">
             <input type="checkbox" />
             <div className="collapse-title text-xl font-medium">
               <h1 className="text-2xl font-bold">Your programs</h1>
             </div>
-            <div className="collapse-content">
-              <div className="btm-nav w-full relative">
+            <div className="collapse-content w-full max-h-60 overflow-auto">
+              <div className="btm-nav w-full flex relative">
                 <button
                   name="PUBLIC"
-                  className={selectStatus.PUBLIC}
-                  onClick={(e) => hdlSelectStatus(e)}
+                  className={`${selectStatus.PUBLIC} flex-1`}
+                  onClick={hdlSelectStatus}
                 >
                   PUBLIC
                 </button>
                 <button
                   name="PRIVATE"
-                  className={selectStatus.PRIVATE}
-                  onClick={(e) => hdlSelectStatus(e)}
+                  className={`${selectStatus.PRIVATE} flex-1`}
+                  onClick={hdlSelectStatus}
                 >
                   PRIVATE
                 </button>
                 <button
                   name="PERSONAL"
-                  className={selectStatus.PERSONAL}
-                  onClick={(e) => hdlSelectStatus(e)}
+                  className={`${selectStatus.PERSONAL} flex-1`}
+                  onClick={hdlSelectStatus}
                 >
                   PERSONAL
                 </button>
               </div>
-              <div className="flex gap-4 w-fit">
+              <div className="flex p-4 gap-4 overflow-x-auto">
                 {personalPrograms.map((item) => {
                   if (item.status !== curStatus) {
-                    return <></>;
+                    return null;
                   }
                   return (
-                    <div key={item.id} className="">
+                    <div key={item.id} className="flex-shrink-0 w-auto">
                       <ProgramCard
+                        className={"w-[200px] h-[200px]"}
+                        hdlClickProgram={() => hdlClickProgram(item.id)}
+                        name={item.name}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="w-full">
+          <div className="w-full collapse bg-base-100">
+            <input type="checkbox" />
+            <div className="collapse-title text-xl font-medium">
+              <h1 className="text-2xl font-bold">Saved programs</h1>
+            </div>
+            <div className="collapse-content w-full max-h-60 overflow-auto">
+              <div className="btm-nav w-full flex relative">
+                <button
+                  name="PUBLIC"
+                  className={`${selectStatus.PUBLIC} flex-1`}
+                  onClick={hdlSelectStatus}
+                >
+                  PUBLIC
+                </button>
+                <button
+                  name="PRIVATE"
+                  className={`${selectStatus.PRIVATE} flex-1`}
+                  onClick={hdlSelectStatus}
+                >
+                  PRIVATE
+                </button>
+                <button
+                  name="PERSONAL"
+                  className={`${selectStatus.PERSONAL} flex-1`}
+                  onClick={hdlSelectStatus}
+                >
+                  PERSONAL
+                </button>
+              </div>
+              <div className="flex gap-4 overflow-x-auto">
+                {personalPrograms.map((item) => {
+                  if (item.status !== curStatus) {
+                    return null;
+                  }
+                  return (
+                    <div key={item.id} className="flex-shrink-0 w-auto">
+                      <ProgramCard
+                        className={"w-[200px] h-[200px]"}
                         hdlClickProgram={() => hdlClickProgram(item.id)}
                         name={item.name}
                       />
                       <h1 className="text-xl font-bold">{item.name}</h1>
-                      <h1>status : {item.status}</h1>
+                      <h1>status: {item.status}</h1>
                     </div>
                   );
                 })}
@@ -102,29 +163,33 @@ export default function UserHomePage() {
           </div>
         </div>
       </div>
-      {/* Request form other user */}
-      <div>
-        <div>Access Requests</div>
-        {allreQuest.map((el) => {
-          return (
-            <div key={el.id} className="flex justify-between">
-              <div className="justify-between bg-red-300 w-[500px]">
-                <span>{el.trainingProgram.name}</span>
-                <span>{el.user.username}</span>
+      <div className="flex flex-col gap-4 p-4">
+        <div className="font-bold text-2xl">Access Requests</div>
+        {allRequests.map((el) => (
+          <div
+            key={el.id}
+            className="hover:bg-base-100 transition-all rounded-lg border-b-2 border-base-300 p-4 flex justify-between"
+          >
+            <div className="justify-between w-[500px]">
+              <div className="font-bold text-lg">
+                Program: {el.trainingProgram.name}
               </div>
-              <button
-                onClick={() => {
-                  console.log(el);
-                  allowRequest(token, el.programId, el.userId);
-                }}
-                className="btn"
-              >
-                Accept
-              </button>
-              <button className="btn">Decline</button>
+              <div>By user: {el.user.username}</div>
             </div>
-          );
-        })}
+            <div className="flex gap-1">
+              <h1 className="text-sm my-auto">Enable access</h1>
+              <input
+                type="checkbox"
+                checked={el.isAllowed} // Set the checkbox based on isAllowed from the backend
+                onChange={() => toggleAccess(el.programId, el.userId, el.isAllowed)}
+                className="toggle my-auto"
+              />
+              <h1 className="btn btn-sm btn-circle btn-ghost my-auto cursor-pointer">
+                ✕
+              </h1>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

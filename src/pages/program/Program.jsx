@@ -70,6 +70,9 @@ export default function Program() {
           ["PUBLIC", "PRIVATE"].includes(programDetail.status)
       );
     }
+    else if (!token && programDetail.status == 'PUBLIC'){
+      setIsAllow(true)
+    }
     if (
       programDetail?.authorId &&
       user?.id &&
@@ -151,7 +154,7 @@ export default function Program() {
             <div className="flex justify-center gap-2">
               <div className="flex w-[200px]">
                 <div className="border-b-2 relative block mx-auto w-full dropdown">
-                  {!isAllow ? (
+                  {!canEdit ? (
                     <div className="shadow-none border rounded-none bg-primary hover:bg-opacity-15 bg-transparent border-transparent flex justify-between w-full btn m-1">
                       <h1>{programDetail.status}</h1>
                     </div>

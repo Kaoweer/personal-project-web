@@ -4,6 +4,7 @@ import useAuthStore from "../stores/authStore";
 const MainNav = () => {
   const user = useAuthStore((state) => state.user);
   const token = useAuthStore((state) => state.token);
+  const logout = useAuthStore(state => state.logout)
   return (
     <div className="flex p-5 px-10 gap-4 bg-primary">
       <div className="flex w-full justify-between">
@@ -21,9 +22,9 @@ const MainNav = () => {
                 <Link to={"/register"}>Register</Link>
               )}
               {token ? (
-                <Link>Logout</Link>
+                <Link onClick={logout}>Logout</Link>
               ) : (
-                <Link to={"auth/login"}>Login</Link>
+                <Link to={"/auth/login"}>Login</Link>
               )}
             </div>
           </ul>

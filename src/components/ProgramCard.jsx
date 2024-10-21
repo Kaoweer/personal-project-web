@@ -1,9 +1,9 @@
 import React from 'react'
 
 export default function ProgramCard(props) {
-  const {id, name,author,tags,hdlClickProgram} = props
+  const {id, name,author,tags,hdlClickProgram,className} = props
   return (
-    <div className='w-[300px] h-[300px]'>
+    <div className={className}>
       <div className="shadow-md cursor-pointer w-fit overflow-hidden bg-black h-fit border rounded-xl" onClick={() => hdlClickProgram(id)}>
         <div className='relative'>
           <img className='w-full h-full transition-all opacity-70 hover:opacity-40 hover:scale-105' src="https://workoutlabs.com/fit/wp-content/uploads/2017/05/engage-intermediate-full-body-crafting-plan.jpg" alt="" />
