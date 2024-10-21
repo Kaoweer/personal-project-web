@@ -21,7 +21,7 @@ export default function UserHomePage() {
   const [personalPrograms, setPersonalPrograms] = useState([]);
   const { token } = useAuthStore.getState();
   const [allreQuest, setAllRequest] = useState([]);
-  const allowRequest = useProgramStore(state => state.allowRequest)
+  const allowRequest = useProgramStore((state) => state.allowRequest);
 
   const hdlClickProgram = (programId) => {
     navigate(`/program/${programId}`);
@@ -49,18 +49,16 @@ export default function UserHomePage() {
   }, []);
 
   return (
-    <div>
-      <div>
-        <h1>Hello {user.username}</h1>
-        <div className="flex flex-col gap-1">
-          <h1>Your programs</h1>
-          <div className="collapse bg-base-200">
+    <div className="w-full">
+      <div className="w-full p-4">
+        <div className="flex flex-col gap-1 w-full">
+          <div className="collapse bg-base-100">
             <input type="checkbox" />
             <div className="collapse-title text-xl font-medium">
-              Click me to show/hide content
+              <h1 className="text-2xl font-bold">Your programs</h1>
             </div>
-            <div className="collapse-content  w-4/5">
-              <div className="btm-nav relative">
+            <div className="collapse-content">
+              <div className="btm-nav w-full relative">
                 <button
                   name="PUBLIC"
                   className={selectStatus.PUBLIC}
@@ -83,7 +81,7 @@ export default function UserHomePage() {
                   PERSONAL
                 </button>
               </div>
-              <div className="flex w-fit">
+              <div className="flex gap-4 w-fit">
                 {personalPrograms.map((item) => {
                   if (item.status !== curStatus) {
                     return <></>;
@@ -114,10 +112,15 @@ export default function UserHomePage() {
                 <span>{el.trainingProgram.name}</span>
                 <span>{el.user.username}</span>
               </div>
-              <button onClick={() => {
-                console.log(el)
-                allowRequest(token,el.programId,el.userId)
-                }} className="btn">Accept</button>
+              <button
+                onClick={() => {
+                  console.log(el);
+                  allowRequest(token, el.programId, el.userId);
+                }}
+                className="btn"
+              >
+                Accept
+              </button>
               <button className="btn">Decline</button>
             </div>
           );

@@ -8,7 +8,7 @@ import CreateProgram from "../../components/CreateProgram";
 export default function AllProgram() {
   const [programs, setPrograms] = useState([]);
   const navigate = useNavigate();
-  const getAllProgram = useProgramStore(state => state.getAllProgram)
+  const getAllProgram = useProgramStore((state) => state.getAllProgram);
 
   useEffect(() => {
     const fetchProgram = async () => {
@@ -28,30 +28,76 @@ export default function AllProgram() {
   };
 
   return (
-    <div className="">
-      <div className="flex p-4 items-center">
-        <h1 className="text-xl font-bold ">Recommended programs  </h1>
-        <h1 className="text-xl font-bold text-gray-400">{programs.length}</h1>
-        <button className="btn btn-primary" onClick={() => document.getElementById("create-modal").showModal()}>+ Add your program</button>
-      </div>
-      
-      <div className="flex flex-wrap gap-4 w-full h-full">
-        {programs.map((item) => {
-          const tags = JSON.parse(item.tags);
-          return (
-            <>
-              <ProgramCard
-                id={item.id}
-                hdlClickProgram={hdlClickProgram}
-                name={item.name}
-                author={item.author.username}
-                tags={tags}
-              />
-            </>
-          );
-        })}
-      </div>
-      <dialog id="create-modal" className="modal">
+    <div className="bg-base-100">
+      <div className="max-w-[1000px] mx-auto">
+        <div className="my-4">
+          <div className="flex py-4 items-center justify-between">
+            <div className="flex">
+              <h1 className="text-5xl font-bold text-primary">
+                Public programs {programs.length}
+              </h1>
+            </div>
+            <button
+              className="text-lg btn btn-primary rounded-full bg-transparent border-2"
+              onClick={() =>
+                document.getElementById("create-modal").showModal()
+              }
+            >
+              + Add your program
+            </button>
+          </div>
+
+          <div className="flex gap-2 items-center">
+            <div className="dropdown">
+              <div tabIndex={0} role="button" className="text-sm btn m-1 bg-transparent border-transparent rounded-full">
+                Equipment
+              </div>
+              <ul
+                tabIndex={0}
+                className=" dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+              >
+                <li><a>Body only</a></li>
+              </ul>
+            </div>
+            <div className="dropdown">
+              <div tabIndex={0} role="button" className="text-sm  btn m-1 bg-transparent border-transparent rounded-full">
+                Level
+              </div>
+              <ul
+                tabIndex={0}
+                className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+              >
+                <li><a>Body only</a></li>
+              </ul>
+            </div>
+            <input
+              type="text"
+              placeholder="Type here"
+              className="input input-bordered text-sm w-full rouded-full p-2 h-fit"
+            />
+            <button className="text-sm btn btn-neutral rounded-full bg-transparent border-1">
+              Search
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-4 w-full h-full justify-between">
+          {programs.map((item) => {
+            const tags = JSON.parse(item.tags);
+            return (
+              <>
+                <ProgramCard
+                  id={item.id}
+                  hdlClickProgram={hdlClickProgram}
+                  name={item.name}
+                  author={item.author.username}
+                  tags={tags}
+                />
+              </>
+            );
+          })}
+        </div>
+        <dialog id="create-modal" className="modal">
           <div className="modal-box">
             <button
               type="button"
@@ -62,10 +108,10 @@ export default function AllProgram() {
             >
               ✕
             </button>
-            <CreateProgram setPrograms={setPrograms}/>
+            <CreateProgram setPrograms={setPrograms} />
           </div>
         </dialog>
+      </div>
     </div>
-    
   );
 }

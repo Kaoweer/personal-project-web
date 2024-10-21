@@ -7,6 +7,7 @@ import ExerciseContainer from "../../components/ExerciseContainer";
 import useProgramStore from "../../stores/programStore";
 import { Reorder } from "framer-motion";
 import useAuthStore from "../../stores/authStore";
+import { DropdownArrow, Restricted } from "../../icons";
 
 export default function Program() {
   const [program, setProgram] = useState([]); // Initial state is an empty array
@@ -118,93 +119,117 @@ export default function Program() {
   };
 
   return (
-    <div className="h-screen">
+    <div className="h-screen bg-base-100">
       <div>
-        <div className="bg-neutral h-full px-4 pt-4">
+        <div className="h-full">
           {/* Program Header */}
-          <div className="bg-base-300 relative">
+          <div className="sticky border flex flex-col gap-2 p-4">
             <h1
               className="cursor-pointer hover:text-primary transition-all"
               onClick={() => navigate("/program")}
             >
               Go back
             </h1>
-            <h1 className="text-center font-bold text-xl">
+            <h1 className="text-center font-extrabold text-4xl">
               {programDetail.name}
             </h1>
             {canEdit ? (
-              <input
-                onChange={() => setEditing((prv) => !prv)}
-                type="checkbox"
-                className="toggle"
-              />
+              <div className="flex justify-center ">
+                <div className="flex gap-2">
+                  <h1>You own this program</h1>
+                  <input
+                    onChange={() => setEditing((prv) => !prv)}
+                    type="checkbox"
+                    className="toggle"
+                  />
+                </div>
+              </div>
             ) : (
               <></>
             )}
 
-            <div className="flex">
-              <div className="flex">
-                <h1>Program status</h1>
-                <div className="relative block mx-auto w-full dropdown">
-                  <div
-                    tabIndex={0}
-                    role="button"
-                    className="bg-primary hover:bg-opacity-15 bg-transparent border-transparent flex justify-start w-full btn m-1"
-                  >
-                    {programDetail.status}
-                  </div>
-                  <ul
-                    tabIndex={0}
-                    className="dropdown-content menu bg-base-100 rounded-box z-[1] w-fit p-2 shadow"
-                  >
-                    <li
-                      onClick={() =>
-                        hdlChangPublicity(`${programDetail.id}`, "PUBLIC")
-                      }
-                    >
-                      <a>Public</a>
-                    </li>
-                    <li
-                      onClick={() =>
-                        hdlChangPublicity(`${programDetail.id}`, "PERSONAL")
-                      }
-                    >
-                      <a>Personal</a>
-                    </li>
-                    <li
-                      onClick={() =>
-                        hdlChangPublicity(`${programDetail.id}`, "PRIVATE")
-                      }
-                    >
-                      <a>Private</a>
-                    </li>
-                  </ul>
+            <div className="flex justify-center gap-2">
+              <div className="flex w-[200px]">
+                <div className="border-b-2 relative block mx-auto w-full dropdown">
+                  {!isAllow ? (
+                    <div className="shadow-none border rounded-none bg-primary hover:bg-opacity-15 bg-transparent border-transparent flex justify-between w-full btn m-1">
+                      <h1>{programDetail.status}</h1>
+                    </div>
+                  ) : (
+                    <>
+                      <div
+                        tabIndex={0}
+                        role="button"
+                        className="shadow-none border rounded-none bg-primary hover:bg-opacity-15 bg-transparent border-transparent flex justify-between w-full btn m-1"
+                      >
+                        <h1>{programDetail.status}</h1>
+                        <DropdownArrow className={"h-[20px]"} />
+                      </div>
+
+                      <ul
+                        tabIndex={0}
+                        className="dropdown-content w-full menu bg-base-100 rounded-box z-[1] w-fit p-2 shadow"
+                      >
+                        <li
+                          onClick={() =>
+                            hdlChangPublicity(`${programDetail.id}`, "PUBLIC")
+                          }
+                        >
+                          <a>Public</a>
+                        </li>
+                        <li
+                          onClick={() =>
+                            hdlChangPublicity(`${programDetail.id}`, "PERSONAL")
+                          }
+                        >
+                          <a>Personal</a>
+                        </li>
+                        <li
+                          onClick={() =>
+                            hdlChangPublicity(`${programDetail.id}`, "PRIVATE")
+                          }
+                        >
+                          <a>Private</a>
+                        </li>
+                      </ul>
+                    </>
+                  )}
                 </div>
               </div>
 
               <div>
-                <div className="block w-full mx-auto dropdown">
-                  <div tabIndex={0} role="button" className="w-full btn m-1">
-                    Day : {day}
+                <div className="block w-[200px] mx-auto dropdown">
+                  <div className="flex border-b-2 ">
+                    <div
+                      tabIndex={0}
+                      role="button"
+                      className="shadow-none rounded-none bg-primary hover:bg-opacity-15 bg-transparent border-transparent flex justify-between w-full btn m-1"
+                    >
+                      Day : {day}
+                      <DropdownArrow className={"h-[20px]"} />
+                    </div>
                   </div>
                   <ul
                     tabIndex={0}
-                    className="dropdown-content menu bg-base-100 rounded-box z-[1] w-fit p-2 shadow"
+                    className="w-full dropdown-content menu bg-base-100 rounded-box z-[1] p-2 shadow"
                   >
-                    <div className="text-center">
+                    <div className="text-center w-full">
                       {!editing ? (
                         <></>
                       ) : (
-                        <div className="flex">
+                        <div className="flex gap-1">
                           {program.length === 0 ? (
                             <></>
                           ) : (
-                            <a className="btn" onClick={() => hdlAddDay(1)}>
+                            <a
+                              className="btn flex-1"
+                              onClick={() => hdlAddDay(1)}
+                            >
                               Add
                             </a>
                           )}
                           <a
-                            className="btn"
+                            className="btn flex-1"
                             onClick={async () => {
                               await removeProgramByDate(programId, allday);
                               hdlAddDay(-1);
@@ -220,7 +245,7 @@ export default function Program() {
                         return (
                           <li key={index}>
                             <a
-                              className="text-center"
+                              className="mt-1 text-center"
                               onClick={async () => {
                                 setDay(item);
                                 const res = await getProgram(
@@ -240,23 +265,31 @@ export default function Program() {
                 </div>
               </div>
             </div>
+
+            {/* <img
+              className="z-[-1] opacity-40 mix-blend-screen absolute top-1/2 left-1/2 w-full h-auto transform -translate-x-1/2 -translate-y-1/2 object-cover"
+              src="https://workoutlabs.com/fit/wp-content/uploads/2017/05/engage-intermediate-full-body-crafting-plan.jpg"
+              alt=""
+            /> */}
           </div>
         </div>
-
+        
         {!isAllow ? (
           <>
             {isAllow ? (
               <></>
             ) : (
-              <>
-                You are not allowed to access this program
+              <div className="max-w-[600px] mx-auto h-full flex gap-4 flex-col items-center">
+                <Restricted className={"mt-20 h-[250px]"}/>
+                <h1 className="text-center text-3xl font-bold">You are not allowed <br />to access this program</h1>
+
                 <button
                   className="btn"
                   onClick={() => sendRequest(token, programId)}
                 >
                   Send request
                 </button>
-              </>
+              </div>
             )}
           </>
         ) : (

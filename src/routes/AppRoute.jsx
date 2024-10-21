@@ -6,10 +6,13 @@ import PageNotFound from "../pages/PageNotFound";
 import Program from "../pages/program/Program";
 import AllProgram from "../pages/program/AllProgram";
 import UserHomePage from "../pages/user/userHomePage";
+import Layout from "../layouts/Layout";
+import HomeLayout from "../layouts/homeLayout";
 
 const router = createBrowserRouter([
   {
     path : "/",
+    element : <Layout/>,
     children : [
       {index : true,element : <Home/>},
       {path : "unauthorization", element : <Unautorization/>},
@@ -18,6 +21,7 @@ const router = createBrowserRouter([
   },
   {
     path : "/auth",
+    element : <Layout/>,
     children : [
       {path : "login",element:<Login/>},
       {path : '*',element : <PageNotFound/>}
@@ -25,6 +29,7 @@ const router = createBrowserRouter([
   },
   {
     path : "/program",
+    element : <Layout/>,
     children : [
       {index : true,element : <AllProgram/>},
       {path : ":programId",element : <Program/>},
@@ -33,6 +38,7 @@ const router = createBrowserRouter([
   },
   {
     path : "/user",
+    element : <HomeLayout/>,
     children : [
       // {index : true,element : <AllProgram/>},
       {path : "home",element : <UserHomePage/>},
