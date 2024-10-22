@@ -1,7 +1,24 @@
 import React, { useState } from "react";
+import useAuthStore from "../stores/authStore";
+import { toast } from "react-toastify";
+import useVerifyStore from "../stores/verifyStore";
 
 export default function VerifyContainer(props) {
   const { file, image, hdlFileChange, setFile, setImage } = props;
+  const token = useAuthStore(state => state.token)
+  const uploadVerify = useVerifyStore(state => state.uploadVerify)
+
+  const hdlSubmit = async(e) => {
+    try {
+      e.target.closest("dialog").close();
+      setFile(null);
+      setImage(null);
+      uploadVerify(file)
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
 
   return (
     <div>
@@ -16,13 +33,8 @@ export default function VerifyContainer(props) {
         />
         {file && <img src={URL.createObjectURL(file)} alt="" />}
         <div className="flex gap-2">
-          <button className="btn btn-primary flex-1">Submit</button>
+          <button className="btn btn-primary flex-1" onClick={hdlSubmit}>Submit</button>
           <button
-            onClick={(e) => {
-              e.target.closest("dialog").close();
-              setFile(null);
-              setImage(null);
-            }}
             className="btn flex-1"
           >
             Cancel

@@ -10,6 +10,7 @@ import Layout from "../layouts/Layout";
 import HomeLayout from "../layouts/homeLayout";
 import ProfileLayout from "../layouts/ProfileLayout";
 import UserProfile from "../pages/user/UserProfile";
+import Verify from "../pages/admin/Verify";
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,13 @@ const router = createBrowserRouter([
     element : <ProfileLayout/>,
     children : [
       {path : ":userId",element : <UserProfile/>}
+    ]
+  },
+  {
+    path : '/admin',
+    element : <ProfileLayout/>,
+    children : [
+      {path : 'verify',element:<Verify/>}
     ]
   }
   // {

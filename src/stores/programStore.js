@@ -59,7 +59,6 @@ const useProgramStore = create((set, get) => ({
   removeProgramByDate : async(programId,day) => {
     try {
       const deletedProgram = await axios.delete(`http://localhost:8000/program/${programId}/day/${day}`)
-      console.log(deletedProgram)
     } catch (err) {
       console.log(err)
     }
