@@ -121,6 +121,8 @@ export default function Program() {
     setAllday((prv) => prv + n);
   };
 
+  console.log(program)
+
   return (
     <div className="h-screen bg-base-100">
       <div>

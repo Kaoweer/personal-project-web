@@ -8,6 +8,8 @@ import AllProgram from "../pages/program/AllProgram";
 import UserHomePage from "../pages/user/userHomePage";
 import Layout from "../layouts/Layout";
 import HomeLayout from "../layouts/homeLayout";
+import ProfileLayout from "../layouts/ProfileLayout";
+import UserProfile from "../pages/user/UserProfile";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +47,13 @@ const router = createBrowserRouter([
       {path : '*',element : <PageNotFound/>}
     ]
   },
+  {
+    path : '/profile',
+    element : <ProfileLayout/>,
+    children : [
+      {path : ":userId",element : <UserProfile/>}
+    ]
+  }
   // {
   //   path : "/exercise",
   //   children : [
