@@ -105,11 +105,12 @@ export default function AllProgram() {
             return (
               <>
                 <ProgramCard
-                  className={"h-[300px] w-[300px]"}
+                  className={"h-[300px] w-[300px] aspect-square"}
                   id={item.id}
                   hdlClickProgram={hdlClickProgram}
                   name={item.name}
                   author={item.author.username}
+                  image = {item.image}
                   tags={tags}
                 />
               </>
@@ -117,7 +118,7 @@ export default function AllProgram() {
           })}
         </div>
         <dialog id="create-modal" className="modal">
-          <div className="modal-box">
+          <div className="modal-box max-w-[700px]">
             <button
               type="button"
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"

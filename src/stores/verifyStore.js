@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 const useVerifyStore = create((set, get) => ({
   uploadVerify : async(file) => {
     try {
-      console.log(file,"******************")
       if (!file){
         return toast.error("Please provide image before submitting")
       }
@@ -22,7 +21,6 @@ const useVerifyStore = create((set, get) => ({
     } catch (error) {
       console.log(error)
     }
-    
   }
 }))
 

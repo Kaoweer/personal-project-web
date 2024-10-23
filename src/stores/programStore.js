@@ -63,13 +63,17 @@ const useProgramStore = create((set, get) => ({
       console.log(err)
     }
   },
-  createProgram : async(token,name) => {
+  createProgram : async(token,name,tags,detail,file) => {
     try {
-      const createdProgram = await axios.post(`http://localhost:8000/program/`,{name : name},
+      const body = new FormData
+      body.append('image',file)
+      body.append('name',name)
+      body.append('tags',tags)
+      body.append('detail',detail)
+      const createdProgram = await axios.post(`http://localhost:8000/program/`,body,
         {
           headers: { Authorization: `Bearer ${token}` }
         })
-        console.log(createdProgram)
         return createdProgram
     } catch (err) {
       console.log(err)

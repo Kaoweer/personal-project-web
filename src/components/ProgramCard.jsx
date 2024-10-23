@@ -1,35 +1,51 @@
-import React from 'react'
+import React, { useEffect } from "react";
 
 export default function ProgramCard(props) {
-  const {id, name,author,tags,hdlClickProgram,className} = props
+  const { id, name, author, image, tags, hdlClickProgram, className } = props;
+
   return (
     <div className={className}>
-      <div className="shadow-md cursor-pointer w-fit overflow-hidden bg-black h-fit border rounded-xl" onClick={() => hdlClickProgram(id)}>
-        <div className='relative'>
-          <img className='w-full h-full transition-all opacity-70 hover:opacity-40 hover:scale-105' src="https://workoutlabs.com/fit/wp-content/uploads/2017/05/engage-intermediate-full-body-crafting-plan.jpg" alt="" />
-          <div className='absolute h-full w-full top-0 left-auto p-4'>
+      <div
+        className="shadow-md cursor-pointer overflow-hidden bg-black border rounded-xl"
+        onClick={() => hdlClickProgram(id)}
+        style={{ aspectRatio: "1 / 1" }} // Ensures the card is square
+      >
+        <div className="relative flex items-center h-full w-full">
+          <img
+            className="h-full w-full object-cover transition-all mix-blend-screen opacity-70 hover:opacity-40 hover:scale-105"
+            src={
+              image ||
+              "https://workoutlabs.com/fit/wp-content/uploads/2017/03/bodyweight-buff-no-equipment-muscle-builder-workout.jpg"
+            }
+            alt=""
+          />
+          <div className="absolute inset-0 flex flex-col justify-center p-4">
             <div>
-              <h1 className='text-center text-3xl text-white font-bold'>{name}</h1>
-              <p className='text-center text-white text-sm'>By {author}</p>
-            </div>
-            {/* <p className='text-white text-sm'>
-              Tags : 
-              {tags ? Object.entries(tags).map(([key,value],index) => {
-                  console.log(key)
-                  return (
-                    <div key={index}>
-                      {key} : {value.map((item,index)=>{
-                        return (
-                          <span key={index}>{item},</span>
-                        )
-                      })}
+              <h1 className="text-center text-3xl transition-all text-white font-bold">
+                {name}
+              </h1>
+              <p className="text-center font-extralight text-white text-sm">
+                By {author}
+              </p>
+
+              {Array.isArray(tags) && tags.length > 0 ? (
+                <div className="flex gap-2 flex-wrap">
+                  {tags.map((el, index) => (
+                    <div
+                      key={index}
+                      className="text-center bg-primary p-2 w-fit mx-auto text-xs font-bold py-1 text-white rounded-full"
+                    >
+                      {el}
                     </div>
-                  )
-                }) : <></>}
-            </p> */}
+                  ))}
+                </div>
+              ) : (
+                <></>
+              )}
+            </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
