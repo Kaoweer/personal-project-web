@@ -1,23 +1,24 @@
 import React, { useState } from "react";
 import useAuthStore from "../stores/authStore";
 import { useNavigate } from "react-router-dom";
+import Register from "../pages/auth/Register";
 
 export default function LoginContainer() {
-  const login = useAuthStore(state => state.login)
-  const [input,setInput] = useState({identity : '',password :''})
-  const navigate = useNavigate()
+  const login = useAuthStore((state) => state.login);
+  const [input, setInput] = useState({ identity: "", password: "" });
+  const navigate = useNavigate();
   const hdlChange = (e) => {
-    setInput({...input,[e.target.name] : e.target.value})
-  }
-  const hdlSubmit = async() => {
+    setInput({ ...input, [e.target.name]: e.target.value });
+  };
+  const hdlSubmit = async () => {
     try {
-      const res = await login(input)
-      console.log(res)
-      navigate('/program')
+      const res = await login(input);
+      console.log(res);
+      navigate("/program");
     } catch (error) {
       console.error("Login error:", error);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col gap-2 p-4">
@@ -27,7 +28,7 @@ export default function LoginContainer() {
         <input
           type="text"
           placeholder="Type here"
-          name = "identity"
+          name="identity"
           onChange={(e) => hdlChange(e)}
           className="input h-fit py-2 input-bordered w-full"
         />
@@ -37,16 +38,35 @@ export default function LoginContainer() {
         <input
           type="password"
           placeholder="Type here"
-          name = "password"
+          name="password"
           onChange={(e) => hdlChange(e)}
           className="input h-fit py-2 input-bordered w-full"
         />
       </div>
       <div className="justify-center flex">
-        <button className="btn btn-primary text-xl w-full" onClick={hdlSubmit}>Submit</button>
+        <button className="btn btn-primary text-xl w-full" onClick={hdlSubmit}>
+          Submit
+        </button>
       </div>
       <hr />
-        <button className="btn btn-primary text-xl w-full">Register</button>
+      <button
+        onClick={() => document.getElementById("register-modal").showModal()}
+        className="btn btn-primary text-xl w-full"
+      >
+        Register
+      </button>
+      <dialog id="register-modal" className="modal">
+        <div className="modal-box">
+          <button
+            type="button"
+            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            onClick={(e) => e.target.closest("dialog").close()}
+          >
+            ✕
+          </button>
+          <Register />
+        </div>
+      </dialog>
     </div>
   );
 }

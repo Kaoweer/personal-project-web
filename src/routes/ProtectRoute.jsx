@@ -1,5 +1,4 @@
-import useAuthStore from "../store/auth-store";
-import { currentUser } from "../api/auth";
+import useAuthStore from "../stores/authStore";
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -17,11 +16,9 @@ const ProtectRoute = ({ element, allow }) => {
 
   const checkRole = async () => {
     try {
-      const resp = await currentUser(token);
-      console.log(resp);
-      const role = resp.data.member.role;
-      console.log("role from backend", role);
-      console.log("allowance",allow)
+      // const resp = await currentUser(token);
+      // console.log(resp);
+      const role = token ? user.role : "GUEST"
       if (allow.includes(role)) {
         setIsAllowed(true);
       } else {
@@ -33,13 +30,13 @@ const ProtectRoute = ({ element, allow }) => {
     }
   };
   if (isAllowed === null) {
-    return <div>Loading...</div>; //ทำloading 1 จังหวะเฉยๆ
+    return <div>Loading...</div>
   }
 
-  // if (!isAllowed) {
-  //   console.log('Is allow',isAllowed)
-  //   return <Navigate to={"/unauthorization"} />;
-  // }
+  if (!isAllowed) {
+    console.log('Is allow',isAllowed)
+    return <Navigate to={"/unauthorization"} />;
+  }
 
   return element;
 };

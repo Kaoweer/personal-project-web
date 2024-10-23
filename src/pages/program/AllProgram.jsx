@@ -102,6 +102,7 @@ export default function AllProgram() {
         <div className="flex flex-wrap gap-4 w-full h-full justify-between">
           {programs.map((item) => {
             const tags = JSON.parse(item.tags);
+            console.log(tags,item.tags,"THISIS ITEM")
             return (
               <>
                 <ProgramCard
@@ -123,7 +124,7 @@ export default function AllProgram() {
               type="button"
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
               onClick={(e) => {
-                e.target.closest("dialog").close();
+                e.target.closest("dialog").close()
               }}
             >
               ✕

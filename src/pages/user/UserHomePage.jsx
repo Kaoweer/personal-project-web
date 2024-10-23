@@ -3,6 +3,7 @@ import useAuthStore from "../../stores/authStore";
 import useProgramStore from "../../stores/programStore";
 import ProgramCard from "../../components/ProgramCard";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function UserHomePage() {
   const user = useAuthStore((state) => state.user);
@@ -19,6 +20,18 @@ export default function UserHomePage() {
   const [personalPrograms, setPersonalPrograms] = useState([]);
   const [allRequests, setAllRequests] = useState([]);
   const allowRequest = useProgramStore((state) => state.allowRequest);
+  const deleteProgram = useProgramStore(state => state.deleteProgram)
+
+  const hdlDelete = async(programId) => {
+    try {
+      await deleteProgram(programId)
+      fetchData()
+      toast.success("Deleted successfully")
+    } catch (err) {
+      console.log(err)
+    }
+
+  }
 
   const hdlClickProgram = (programId) => {
     navigate(`/program/${programId}`);
@@ -98,12 +111,13 @@ export default function UserHomePage() {
                     return null;
                   }
                   return (
-                    <div key={item.id} className="flex-shrink-0 w-auto">
+                    <div key={item.id} className="flex-shrink-0 w-auto flex flex-col gap-2 items-center">
                       <ProgramCard
                         className={"w-[200px] h-[200px]"}
                         hdlClickProgram={() => hdlClickProgram(item.id)}
                         name={item.name}
                       />
+                      <button onClick={() => hdlDelete(item.id)} className="btn btn-xs w-2/3 rounded-full bg-none">Delete</button>
                     </div>
                   );
                 })}

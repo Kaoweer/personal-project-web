@@ -10,7 +10,7 @@ const HomeLayout = () => {
         <div className="min-w-[250px] w-[250px] h-full">
           <Sidebar />
         </div>
-        <div className="flex-1 max-w-[calc(100%-300px)] min-h-screen overflow-hidden">
+        <div className="flex-1 w-full min-w-[700px] max-w-[calc(100%-300px)] min-h-screen overflow-hidden">
           <Outlet />
         </div>
       </div>

@@ -11,6 +11,24 @@ const useProgramStore = create((set, get) => ({
       `http://localhost:8000/program/${programId}/${exerciseId}?${query}`
     );
   },
+  editProgram : async(token,body,programId,file) => {
+    try {    
+      console.log(file)
+      const newBody = new FormData
+      for (let[key,val] of Object.entries(body)){
+        newBody.append(key,val)
+      }
+      newBody.append("image",file)
+      const response = await axios.patch(`http://localhost:8000/program/publicity/${programId}/publicity`,newBody,{
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      console.log(response)
+      toast.success("Update program successfully")
+    } catch (err) {
+      console.log(err)
+    }
+
+  },
   getAllProgram: async () => {
     const response = await axios.get("http://localhost:8000/program");
     return response;
@@ -42,8 +60,11 @@ const useProgramStore = create((set, get) => ({
     console.log(result)
   },
   updatePublicity : async(programId,publicity) => {
+    const {token} = useAuthStore.getState()
     const {getProgram,exerciseArray} = get()
-    const result = await axios.patch(`http://localhost:8000/program/publicity/${programId}/${publicity}`)
+    const result = await axios.patch(`http://localhost:8000/program/publicity/${programId}/${publicity}`,{},{
+      headers: { Authorization: `Bearer ${token}` }
+    })
     const resArray = await getProgram(programId)
     console.log(result)
     console.log(resArray)
@@ -129,10 +150,20 @@ const useProgramStore = create((set, get) => ({
         headers : { Authorization: `Bearer ${token}` }
       })
       console.log(res.data)
-      return res.data
       toast.success("Accepted request")
+      return res.data
     } catch (err) {
       toast.error(JSON.stringify(err.response.data.err))
+    }
+  },
+  deleteProgram : async(programId) => {
+    const {token} = useAuthStore.getState()
+    try {
+      const res = await axios.delete(`http://localhost:8000/program/delete/${programId}`,{
+        headers : { Authorization: `Bearer ${token}` }
+      })
+    } catch (err) {
+      console.log(err)
     }
   }
 }));

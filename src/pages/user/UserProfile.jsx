@@ -19,6 +19,14 @@ export default function UserProfile() {
     getUserProfile(userId);
   }, []);
 
+  useEffect(() => {
+    console.log(userProfile)
+    console.log(userProfile)
+    if (Object.keys(userProfile).length === 0){
+      navigate('/program')
+    }
+  },[userProfile])
+
   console.log(userProfile);
   return (
     <div className="p-4">

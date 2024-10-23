@@ -11,6 +11,7 @@ import HomeLayout from "../layouts/homeLayout";
 import ProfileLayout from "../layouts/ProfileLayout";
 import UserProfile from "../pages/user/UserProfile";
 import Verify from "../pages/admin/Verify";
+import ProtectRoute from "./ProtectRoute";
 
 const router = createBrowserRouter([
   {
@@ -41,7 +42,7 @@ const router = createBrowserRouter([
   },
   {
     path : "/user",
-    element : <HomeLayout/>,
+    element : <ProtectRoute element={<HomeLayout/>} allow={["ADMIN","CLIENT"]}/>,
     children : [
       // {index : true,element : <AllProgram/>},
       {path : "home",element : <UserHomePage/>},
@@ -50,14 +51,14 @@ const router = createBrowserRouter([
   },
   {
     path : '/profile',
-    element : <ProfileLayout/>,
+    element : <ProtectRoute element={<ProfileLayout/>} allow={["ADMIN","CLIENT"]}/>,
     children : [
       {path : ":userId",element : <UserProfile/>}
     ]
   },
   {
     path : '/admin',
-    element : <ProfileLayout/>,
+    element : <ProtectRoute element={<ProfileLayout/>} allow={["ADMIN"]}/>,
     children : [
       {path : 'verify',element:<Verify/>}
     ]

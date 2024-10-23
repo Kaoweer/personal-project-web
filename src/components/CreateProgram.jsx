@@ -41,8 +41,7 @@ export default function CreateProgram(props) {
     e.preventDefault()
     let tagArray = Object.values(tags)
     const updatedProgramDetail = { ...programDetail, tags: tagArray };
-
-    const newProgram = await createProgram(token, programDetail.name,tagArray,programDetail.detail,file);
+    const newProgram = await createProgram(token, programDetail.name,JSON.stringify(tagArray),programDetail.detail,file);
     const allProgram = await getAllProgram();
     
     clearState()

@@ -8,7 +8,7 @@ const MainNav = () => {
   return (
     <div className="flex p-5 px-10 gap-4 bg-primary">
       <div className="flex w-full justify-between">
-        <Link to={"/"}>Logo</Link>
+        <Link to={"/"}><img className="h-[50px]" src="/src/assets/logo.png"/></Link>
 
         <div>
           <ul className="flex gap-4 font-normal">
@@ -22,7 +22,7 @@ const MainNav = () => {
                 <Link to={"/register"}>Register</Link>
               )}
               {token ? (
-                <Link onClick={logout}>Logout</Link>
+                <Link to={"/"} onClick={logout}>Logout</Link>
               ) : (
                 <Link to={"/auth/login"}>Login</Link>
               )}
