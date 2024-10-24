@@ -1,11 +1,15 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import useAuthStore from "../stores/authStore";
+import useVerifyStore from "../stores/verifyStore";
+import { toast } from "react-toastify";
 
 export default function AdminVerify() {
+  const verifyUser = useVerifyStore(state => state.verifyUser)
   const [verify, setVerify] = useState([]);
   const token = useAuthStore((state) => state.token);
   const [curImage, setCurImage] = useState("");
+  const user = useAuthStore(state => state.user)
 
   const fetchVerification = async () => {
     try {
@@ -14,7 +18,7 @@ export default function AdminVerify() {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(rs.data);
+      // console.log(rs.data);
       setVerify(rs.data);
     } catch (err) {
       console.log(err);
@@ -24,6 +28,18 @@ export default function AdminVerify() {
   useEffect(() => {
     fetchVerification();
   }, []);
+
+  // const hdlChangeRole = async (userId, newRole) => {
+  //   try {
+  //     // Use the verifyUser function instead of axios
+  //     await verifyUser(userId, newRole);
+  //     toast.success("User role updated successfully!");
+  //     fetchVerification(); // Re-fetch verification data to reflect changes
+  //   } catch (err) {
+  //     console.log(err);
+  //     toast.error("Failed to update role.");
+  //   }
+  // };
 
   return (
     <div>
@@ -52,6 +68,7 @@ export default function AdminVerify() {
                   <div className="flex gap-2">
                     <input
                       type="checkbox"
+                      onChange={hdlChangeRole(el.userId,"TRAINER")}
                       checked={el.isAllowed} // Set the checkbox based on isAllowed from the backend
                       className="toggle my-auto"
                     />

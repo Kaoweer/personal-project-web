@@ -43,6 +43,11 @@ export default function CreateProgram(props) {
     const updatedProgramDetail = { ...programDetail, tags: tagArray };
     const newProgram = await createProgram(token, programDetail.name,JSON.stringify(tagArray),programDetail.detail,file);
     const allProgram = await getAllProgram();
+
+    if(!programDetail.name){
+      alert("Please fill your program's name")
+      return
+    }
     
     clearState()
     navigate(`/program/${newProgram.data.id}`);

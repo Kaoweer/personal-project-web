@@ -38,7 +38,7 @@ export default function ExerciseContainer(props) {
             key={item.index}
             onClick={async () => {
               const result = await getExercise(`primaryMuscles=${item}`);
-              console.log(result);
+              console.log(result,"-----------------------------------");
               setExercise(result.data);
             }}
             className="btn btn-primary"

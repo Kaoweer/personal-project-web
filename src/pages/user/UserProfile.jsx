@@ -14,18 +14,24 @@ export default function UserProfile() {
     navigate(`/program/${programId}`);
   };
 
-  useEffect(() => {
-    console.log(userId);
-    getUserProfile(userId);
-  }, []);
+  const fetchProfile = async () => {
+    try {
+      await getUserProfile(userId);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    console.log(userProfile)
-    console.log(userProfile)
-    if (Object.keys(userProfile).length === 0){
-      navigate('/program')
-    }
-  },[userProfile])
+    console.log(userId);
+    fetchProfile()
+  }, []);
+
+  // useEffect(() => {
+  //   if (Object.keys(userProfile).length === 0){
+  //     navigate('/program')
+  //   }
+  // },[userProfile])
 
   console.log(userProfile);
   return (
@@ -47,7 +53,10 @@ export default function UserProfile() {
           eligendi fuga consequuntur suscipit voluptatem.
         </p>
         <div>
-          <img src="https://storage.googleapis.com/fastwork-static/913843ed-52ca-4f0e-9ce6-da46a1a0c440.jpg" alt="" />
+          <img
+            src="https://storage.googleapis.com/fastwork-static/913843ed-52ca-4f0e-9ce6-da46a1a0c440.jpg"
+            alt=""
+          />
         </div>
         <div className="w-full">
           <div className="w-full collapse bg-base-100">

@@ -63,12 +63,6 @@ const router = createBrowserRouter([
       {path : 'verify',element:<Verify/>}
     ]
   }
-  // {
-  //   path : "/exercise",
-  //   children : [
-  //     {index : true,element : <WorkoutContainer/>}
-  //   ]
-  // }
 ])
 
 export default function AppRoute() {

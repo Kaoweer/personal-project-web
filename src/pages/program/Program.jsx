@@ -37,7 +37,7 @@ export default function Program() {
   const fetchProgramDetail = async () => {
     try {
       const allProgram = await getProgramById(programId);
-      setProgramDetail(allProgram.data); // Just update the state here
+      setProgramDetail(allProgram.data); 
     } catch (err) {
       console.log(err);
     }
@@ -53,13 +53,13 @@ export default function Program() {
     }
   };
 
-  // Use effect to fetch program detail and check permissions on mount
+ 
   useEffect(() => {
     fetchProgramDetail();
     checkUserPermission();
-  }, [programId]); // Run when programId changes
+  }, [programId]);
 
-  // Effect to handle when both programDetail and isAllow are set
+
   useEffect(() => {
     if (programDetail?.authorId && user?.id) {
       console.log(
@@ -84,7 +84,7 @@ export default function Program() {
     }
   }, [programDetail, isAllow, user]);
 
-  // Fetch program when program detail is ready
+
   useEffect(() => {
     const fetchProgram = async () => {
       try {

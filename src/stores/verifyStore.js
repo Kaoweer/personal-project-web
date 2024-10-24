@@ -4,24 +4,38 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const useVerifyStore = create((set, get) => ({
-  uploadVerify : async(file) => {
+  uploadVerify: async (file) => {
     try {
-      if (!file){
-        return toast.error("Please provide image before submitting")
+      if (!file) {
+        return toast.error("Please provide image before submitting");
       }
-      const {token} = useAuthStore.getState()
-      console.log(file)
-      const body = new FormData
-      body.append('image',file)
-      const rs = await axios.post('http://localhost:8000/verify',body,{
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      console.log(rs)
-      toast.success("Upload successfully")
+      const { token } = useAuthStore.getState();
+      console.log(file);
+      const body = new FormData();
+      body.append("image", file);
+      const rs = await axios.post("http://localhost:8000/verify", body, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(rs);
+      toast.success("Upload successfully");
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
-}))
+  },
+  verifyUser: async (userId,role) => {
+    const {token} = useAuthStore.getState()
+    try {
+      const rs = await axios.patch(
+        `http://localhost:8000/verify/${userId}`,
+        {role : role},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  },
+}));
 
-export default useVerifyStore
+export default useVerifyStore;

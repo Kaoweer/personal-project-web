@@ -9,9 +9,9 @@ const useProfileStore = create((set,get) => ({
     console.log(userId)
     try {
       const rs = await axios.get(`http://localhost:8000/profile/${userId}`)
-      console.log(rs)
       set({userProfile : rs.data.userProfile})
       set({userProgram : rs.data.userProgram})
+      return rs.data
     } catch (err) {
       console.log(err)
     }
