@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 const useProgramStore = create((set, get) => ({
   exerciseArray: [],
   isAllow : false,
+  URL : import.meta.env.VITE_API_URL,
   addExercise: async (programId, exerciseId,query) => {
     const result = await axios.post(
       `http://localhost:8000/program/${programId}/${exerciseId}?${query}`
@@ -30,7 +31,9 @@ const useProgramStore = create((set, get) => ({
 
   },
   getAllProgram: async () => {
-    const response = await axios.get("http://localhost:8000/program");
+    const {URL} = get()
+    console.log(URL)
+    const response = await axios.get(`${URL}/program`);
     return response;
   },
   getProgramById : async(programId) => {
