@@ -5,7 +5,7 @@ import Unautorization from "../pages/Unautorization";
 import PageNotFound from "../pages/PageNotFound";
 import Program from "../pages/program/Program";
 import AllProgram from "../pages/program/AllProgram";
-import UserHomePage from "../pages/user/userHomePage";
+import UserHomePage from "../pages/user/UserHomePage";
 import Layout from "../layouts/Layout";
 import HomeLayout from "../layouts/HomeLayout";
 import ProfileLayout from "../layouts/ProfileLayout";
