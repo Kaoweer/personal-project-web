@@ -7,7 +7,7 @@ import Program from "../pages/program/Program";
 import AllProgram from "../pages/program/AllProgram";
 import UserHomePage from "../pages/user/userHomePage";
 import Layout from "../layouts/Layout";
-import HomeLayout from "../layouts/homeLayout";
+import HomeLayout from "../layouts/HomeLayout";
 import ProfileLayout from "../layouts/ProfileLayout";
 import UserProfile from "../pages/user/UserProfile";
 import Verify from "../pages/admin/Verify";
