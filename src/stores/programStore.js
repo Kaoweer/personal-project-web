@@ -37,14 +37,16 @@ const useProgramStore = create((set, get) => ({
     return response;
   },
   getProgramById : async(programId) => {
-    const response = await axios.get(`http://localhost:8000/program/get/${programId}`)
+    const {URL} = get()
+    const response = await axios.get(`${URL}/program/get/${programId}`)
     return response
   },
   getProgram : async (programId,query) => {
     console.log(programId,query)
+    const {URL} = get()
     try {
       const response = await axios.get(
-        `http://localhost:8000/program/${programId}?${query}`
+        `${URL}/program/${programId}?${query}`
       );
         return response.data.sort((a, b) => a.orderPriority - b.orderPriority)
     } catch (err) {
@@ -53,19 +55,20 @@ const useProgramStore = create((set, get) => ({
   },
   updateProgram : async(workoutArray,programId) => {
     console.log(workoutArray,programId)
+    const {URL} = get()
     let body = []
     workoutArray.forEach((item,index) => {
       item["orderPriority"] = index+1
       body.push(item)
     });
   
-    const result = await axios.patch(`http://localhost:8000/program/${programId}`,body)
+    const result = await axios.patch(`${URL}/program/${programId}`,body)
     console.log(result)
   },
   updatePublicity : async(programId,publicity) => {
     const {token} = useAuthStore.getState()
-    const {getProgram,exerciseArray} = get()
-    const result = await axios.patch(`http://localhost:8000/program/publicity/${programId}/${publicity}`,{},{
+    const {getProgram,exerciseArray,URL} = get()
+    const result = await axios.patch(`${URL}/program/publicity/${programId}/${publicity}`,{},{
       headers: { Authorization: `Bearer ${token}` }
     })
     const resArray = await getProgram(programId)
@@ -88,13 +91,14 @@ const useProgramStore = create((set, get) => ({
     }
   },
   createProgram : async(token,name,tags,detail,file) => {
+    const {URL} = get()
     try {
       const body = new FormData
       body.append('image',file)
       body.append('name',name)
       body.append('tags',tags)
       body.append('detail',detail)
-      const createdProgram = await axios.post(`http://localhost:8000/program/`,body,
+      const createdProgram = await axios.post(`${URL}/program/`,body,
         {
           headers: { Authorization: `Bearer ${token}` }
         })
@@ -104,8 +108,9 @@ const useProgramStore = create((set, get) => ({
     }
   },
   getPersonalProgram : async(token) => {
+    const {URL} = get()
     try {
-      const personalPrograms = await axios.get(`http://localhost:8000/program/personal`,{
+      const personalPrograms = await axios.get(`${URL}/program/personal`,{
         headers : { Authorization: `Bearer ${token}` }
       })
       console.log(personalPrograms)
@@ -115,7 +120,8 @@ const useProgramStore = create((set, get) => ({
     }
   },
   getAllowUser : async(token,programId) => {
-    const allowedUser = await axios.get(`http://localhost:8000/program/allow/user/${programId}`,{
+    const {URL} = get()
+    const allowedUser = await axios.get(`${URL}/program/allow/user/${programId}`,{
       headers : { Authorization: `Bearer ${token}` }
     })
     console.log(allowedUser)
@@ -123,8 +129,9 @@ const useProgramStore = create((set, get) => ({
   },
   sendRequest : async(token,programId) => {
     console.log(token,programId)
+    const {URL} = get()
     try {
-      const res = await axios.post(`http://localhost:8000/program/allow/${programId}`,{},{
+      const res = await axios.post(`${URL}/program/allow/${programId}`,{},{
         headers : { Authorization: `Bearer ${token}` }
       })
       toast.success('Request sent')
@@ -135,8 +142,9 @@ const useProgramStore = create((set, get) => ({
   },
   getRequests : async(token) => {
     console.log(token)
+    const {URL} = get()
     try {
-      const res = await axios.get(`http://localhost:8000/program/allow/`,{
+      const res = await axios.get(`${URL}/program/allow/`,{
         headers : { Authorization: `Bearer ${token}` }
       })
       console.log(res)
@@ -148,8 +156,9 @@ const useProgramStore = create((set, get) => ({
   },
   allowRequest : async(token,programId,userId,status) => {
     console.log(token,programId,userId)
+    const {URL} = get()
     try {
-      const res = await axios.patch(`http://localhost:8000/program/allow/${programId}`,{userId : userId,"isAllowed" : status},{
+      const res = await axios.patch(`${URL}/program/allow/${programId}`,{userId : userId,"isAllowed" : status},{
         headers : { Authorization: `Bearer ${token}` }
       })
       console.log(res.data)
@@ -161,8 +170,9 @@ const useProgramStore = create((set, get) => ({
   },
   deleteProgram : async(programId) => {
     const {token} = useAuthStore.getState()
+    const {URL} = get()
     try {
-      const res = await axios.delete(`http://localhost:8000/program/delete/${programId}`,{
+      const res = await axios.delete(`${URL}/program/delete/${programId}`,{
         headers : { Authorization: `Bearer ${token}` }
       })
     } catch (err) {

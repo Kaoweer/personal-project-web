@@ -4,7 +4,9 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const useVerifyStore = create((set, get) => ({
+  URL:import.meta.env.VITE_API_URL,
   uploadVerify: async (file) => {
+    const {URL} = get()
     try {
       if (!file) {
         return toast.error("Please provide image before submitting");
@@ -13,7 +15,7 @@ const useVerifyStore = create((set, get) => ({
       console.log(file);
       const body = new FormData();
       body.append("image", file);
-      const rs = await axios.post("http://localhost:8000/verify", body, {
+      const rs = await axios.post(`${URL}/verify`, body, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log(rs);
@@ -24,10 +26,11 @@ const useVerifyStore = create((set, get) => ({
   },
   verifyUser: async (userId, role) => {
     const { token } = useAuthStore.getState();
+    const {URL} = get()
     console.log(userId,'++++++++')
     try {
       const rs = await axios.patch(
-        `http://localhost:8000/verify/${userId}`,
+        `${URL}/verify/${userId}`,
         { role: role },
         {
           headers: { Authorization: `Bearer ${token}` },
