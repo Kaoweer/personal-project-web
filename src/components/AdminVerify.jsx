@@ -1,51 +1,51 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import useAuthStore from "../stores/authStore";
 import useVerifyStore from "../stores/verifyStore";
 import { toast } from "react-toastify";
 
 export default function AdminVerify() {
-  const verifyUser = useVerifyStore(state => state.verifyUser)
+  const verifyUser = useVerifyStore((state) => state.verifyUser);
   const [verify, setVerify] = useState([]);
   const token = useAuthStore((state) => state.token);
   const [curImage, setCurImage] = useState("");
-  const user = useAuthStore(state => state.user)
+  const user = useAuthStore((state) => state.user);
 
-  const fetchVerification = async () => {
+  const fetchVerification = useCallback(async () => {
     try {
       const rs = await axios.get("http://localhost:8000/verify", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      // console.log(rs.data);
       setVerify(rs.data);
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchVerification();
-  }, []);
+  }, [fetchVerification]);
 
-  // const hdlChangeRole = async (userId, newRole) => {
-  //   try {
-  //     // Use the verifyUser function instead of axios
-  //     await verifyUser(userId, newRole);
-  //     toast.success("User role updated successfully!");
-  //     fetchVerification(); // Re-fetch verification data to reflect changes
-  //   } catch (err) {
-  //     console.log(err);
-  //     toast.error("Failed to update role.");
-  //   }
-  // };
+  const hdlChangeRole = async (userId, newRole) => {
+    try {
+      const roleToSet = newRole === "TRAINER" ? "TRAINER" : "CLIENT";
+      await verifyUser(userId, roleToSet); // userId is correctly passed here
+      toast.success("User role updated successfully!");
+      fetchVerification();
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to update role.");
+    }
+  };
 
   return (
     <div>
       <div className="p-4 flex flex-col gap-4">
         <h1 className="text-3xl font-extrabold">Await trainer verification</h1>
         {verify.map((el) => {
+          console.log(el);
           return (
             <div key={el.id} className="collapse bg-white">
               <input type="checkbox" />
@@ -68,8 +68,14 @@ export default function AdminVerify() {
                   <div className="flex gap-2">
                     <input
                       type="checkbox"
-                      onChange={hdlChangeRole(el.userId,"TRAINER")}
-                      checked={el.isAllowed} // Set the checkbox based on isAllowed from the backend
+                      onChange={(e) =>{
+                        console.log(el)
+                        hdlChangeRole(
+                          el.userId, // Ensure correct user ID
+                          e.target.checked ? "TRAINER" : "CLIENT"
+                        )}
+                      }
+                      checked={el.user.role === "TRAINER"} // Reflect current verification status
                       className="toggle my-auto"
                     />
                     <h1 className="btn btn-sm btn-circle btn-ghost my-auto cursor-pointer">

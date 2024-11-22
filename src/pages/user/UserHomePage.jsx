@@ -36,9 +36,24 @@ export default function UserHomePage() {
   const hdlClickProgram = (programId) => {
     navigate(`/program/${programId}`);
   };
+  
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/profile/${user.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const fetchData = async () => {
     const personalPrograms = await getPersonalProgram(token);
+    console.log(personalPrograms)
     setPersonalPrograms(personalPrograms);
     const requests = await getRequests(token);
     setAllRequests(requests);
@@ -70,6 +85,7 @@ export default function UserHomePage() {
 
   useEffect(() => {
     fetchData();
+    fetchUserData()
   }, []);
 
   return (

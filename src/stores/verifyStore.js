@@ -22,16 +22,18 @@ const useVerifyStore = create((set, get) => ({
       console.log(error);
     }
   },
-  verifyUser: async (userId,role) => {
-    const {token} = useAuthStore.getState()
+  verifyUser: async (userId, role) => {
+    const { token } = useAuthStore.getState();
+    console.log(userId,'++++++++')
     try {
       const rs = await axios.patch(
         `http://localhost:8000/verify/${userId}`,
-        {role : role},
+        { role: role },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      console.log(rs);
     } catch (error) {
       console.log(error);
     }

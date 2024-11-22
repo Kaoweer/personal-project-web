@@ -9,7 +9,7 @@ export default function EditProgram(props) {
   const [programDetail, setProgramDetail] = useState({
     name: "",
     tags: [],
-    detail: ""
+    detail: "",
   });
   const editProgram = useProgramStore((state) => state.editProgram);
   const [file, setFile] = useState(null);
@@ -17,20 +17,50 @@ export default function EditProgram(props) {
   const [tags, setTags] = useState({
     equipment: "",
     level: "",
-    goal: ""
+    goal: "",
   });
 
-  // Effect to update programDetail when programData is updated
   useEffect(() => {
-    if (programData) {
-      console.log(programData)
-      setProgramDetail({
-        name: programData.name || "",
-        tags: programData.tags || [],
-        detail: programData.detail || ""
-      });
+    if (programData && programData.tags) {
+      try {
+        // First parse attempt
+        const parsedTags = typeof programData.tags === 'string' 
+          ? JSON.parse(programData.tags) 
+          : programData.tags;
+        
+        // Second parse if needed
+        const tagsArray = Array.isArray(parsedTags) 
+          ? parsedTags 
+          : (typeof parsedTags === 'string' ? JSON.parse(parsedTags) : []);
+  
+        setProgramDetail({
+          name: programData.name || "",
+          tags: parsedTags || [],
+          detail: programData.detail || "",
+        });
+  
+        setTags({
+          equipment: tagsArray[0] || "",
+          level: tagsArray[1] || "",
+          goal: tagsArray[2] || "",
+        });
+      } catch (error) {
+        // If parsing fails, set default empty values
+        setProgramDetail({
+          name: programData.name || "",
+          tags: [],
+          detail: programData.detail || "",
+        });
+        setTags({
+          equipment: "",
+          level: "",
+          goal: "",
+        });
+      }
     }
-  }, [programData]); // Run the effect whenever programData changes
+  }, [programData]);
+  
+
 
   const hdlOnchange = (e) => {
     setProgramDetail({ ...programDetail, [e.target.name]: e.target.value });
@@ -41,20 +71,32 @@ export default function EditProgram(props) {
   };
 
   const clearState = () => {
+    console.log(tags)
     setFile(null);
     setProgramDetail({
       name: programData.name || "",
       tags: programData.tags || [],
-      detail: programData.detail || ""
+      detail: programData.detail || "",
+    });
+    
+    // Parse and set the original tags from programData
+    const parsedTags = JSON.parse(programData.tags || '[]');
+    setTags({
+      equipment: parsedTags[0] || "",
+      level: parsedTags[1] || "",
+      goal: parsedTags[2] || "",
     });
   };
 
   const hdlEditDetail = async (e) => {
     e.preventDefault();
     let tagArray = Object.values(tags);
-    const updatedProgramDetail = { ...programDetail, tags: JSON.stringify(tagArray) };
+    const updatedProgramDetail = {
+      ...programDetail,
+      tags: JSON.stringify(tagArray),
+    };
 
-    await editProgram(token, updatedProgramDetail, programId,file);
+    await editProgram(token, updatedProgramDetail, programId, file);
     await fetchProgramDetail();
     clearState();
   };
@@ -67,8 +109,10 @@ export default function EditProgram(props) {
   const isSelected = (category, value) => tags[category] === value;
 
   if (!programData) {
-    return <div>Loading...</div>; // You can customize the loading state as needed
+    return <div>Loading...</div>;
   }
+
+  const parsedTags = JSON.parse(programData.tags || '[]');
 
   return (
     <div>
@@ -80,10 +124,18 @@ export default function EditProgram(props) {
           <div className="flex h-[200px] w-[200px] flex-col p-2 pb-0">
             <img
               className="h-full w-full object-cover"
-              src={!file ? "https://www.legrand.com.kh/modules/custom/legrand_ecat/assets/img/no-image.png" : URL.createObjectURL(file)}
+              src={
+                !file
+                  ? "https://www.legrand.com.kh/modules/custom/legrand_ecat/assets/img/no-image.png"
+                  : URL.createObjectURL(file)
+              }
               alt=""
             />
-            <input onChange={hdlFileChange} type="file" className="h-fit file-input file-input-ghost w-full max-w-xs" />
+            <input
+              onChange={hdlFileChange}
+              type="file"
+              className="h-fit file-input file-input-ghost w-full max-w-xs"
+            />
           </div>
           <div className="flex w-full flex-col gap-2 p-2">
             <input
@@ -104,7 +156,6 @@ export default function EditProgram(props) {
           </div>
         </div>
 
-        {/* Equipment Section */}
         <div>
           <form className="flex flex-col gap-2 font-bold">
             <div className="flex gap-4 items-center">
@@ -123,7 +174,7 @@ export default function EditProgram(props) {
                       name="equipment"
                       value={option}
                       className="hidden"
-                      checked={isSelected("equipment", option)}
+                      checked={parsedTags.includes(option)}
                     />
                     <button
                       type="button"
@@ -143,7 +194,6 @@ export default function EditProgram(props) {
               </div>
             </div>
 
-            {/* Level Section */}
             <div className="flex gap-4 items-center">
               <h1>Level</h1>
               <div className="flex gap-2">
@@ -155,7 +205,7 @@ export default function EditProgram(props) {
                       name="level"
                       value={option}
                       className="hidden"
-                      checked={isSelected("level", option)}
+                      checked={true}
                     />
                     <button
                       type="button"
@@ -175,7 +225,6 @@ export default function EditProgram(props) {
               </div>
             </div>
 
-            {/* Goal Section */}
             <div className="flex gap-4 items-center">
               <h1>Goal</h1>
               <div className="flex gap-2">
@@ -193,7 +242,7 @@ export default function EditProgram(props) {
                       name="goal"
                       value={option}
                       className="hidden"
-                      checked={isSelected("goal", option)}
+                      checked={parsedTags.includes(option)}
                     />
                     <button
                       type="button"
@@ -217,10 +266,16 @@ export default function EditProgram(props) {
               <button className="btn flex-1" onClick={hdlEditDetail}>
                 Edit Program
               </button>
-              <button className="btn flex-1 " onClick={(e) => {
-                e.preventDefault()
-                e.target.closest("dialog").close()
-              }}>Cancel</button>
+              <button
+                className="btn flex-1 "
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.target.closest("dialog").close();
+                  clearState()
+                }}
+              >
+                Cancel
+              </button>
             </div>
           </form>
         </div>

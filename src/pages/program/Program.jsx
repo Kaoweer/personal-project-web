@@ -160,7 +160,7 @@ export default function Program() {
                       className="toggle"
                     />
                   </div>
-                  <div onClick={() => {
+                  <div className="cursor-pointer" onClick={() => {
                     document.getElementById("edit-modal").showModal()
                     }}>
                     Edit details
@@ -437,7 +437,7 @@ export default function Program() {
 
         <dialog id="edit-modal" className="modal">
           <div className="modal-box max-w-[700px]">
-            <button
+            {/* <button
               type="button"
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
               onClick={(e) => {
@@ -445,7 +445,7 @@ export default function Program() {
               }}
             >
               ✕
-            </button>
+            </button> */}
             <EditProgram programId = {programId} fetchProgramDetail={fetchProgramDetail} setProgramData = {setProgramDetail} programData = {programDetail}/>
           </div>
         </dialog>

@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function ProgramCard(props) {
   const { id, name, author, image, tags, hdlClickProgram, className } = props;
+  const navigate = useNavigate();
 
   return (
     <div className={className}>
@@ -24,9 +26,14 @@ export default function ProgramCard(props) {
               <h1 className="text-center text-3xl transition-all text-white font-bold">
                 {name}
               </h1>
-              <p className="text-center font-extralight text-white text-sm">
-                By {author}
-              </p>
+              <div className="flex w-full justify-center hover:scale-110 hover:font-bold hover:text-primary transition-all">
+                <Link
+                  to={`/profile/`}
+                  className="mx-auto text-center font-extralight text-white text-lg"
+                >
+                  By {author}
+                </Link>
+              </div>
 
               {Array.isArray(tags) && tags.length > 0 ? (
                 <div className="flex gap-2 flex-wrap">
