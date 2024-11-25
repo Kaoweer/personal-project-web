@@ -34,6 +34,7 @@ export default function Program() {
   const [isAllow, setIsAllow] = useState(false);
   const editProgram = useProgramStore(state => state.editProgram)
 
+
   const fetchProgramDetail = async () => {
     try {
       const allProgram = await getProgramById(programId);
@@ -89,6 +90,9 @@ export default function Program() {
     const fetchProgram = async () => {
       try {
         const result = await getProgram(programId, `day=1`);
+        const allWorkout = await getProgram(programId);
+        const maxDay = Math.max(...allWorkout.map(workout => workout.day));
+        setAllday(maxDay);
         setProgram(result);
       } catch (err) {
         console.log(err);
@@ -99,6 +103,7 @@ export default function Program() {
       fetchProgram();
     }
   }, [programDetail]);
+
 
   const hdlRemoveExercise = async (id) => {
     const res = await axios.delete(`http://localhost:8000/program/${id}`);
