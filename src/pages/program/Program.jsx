@@ -91,18 +91,19 @@ export default function Program() {
       try {
         const result = await getProgram(programId, `day=1`);
         const allWorkout = await getProgram(programId);
-        const maxDay = Math.max(...allWorkout.map(workout => workout.day));
+        const maxDay = allWorkout.length > 0 ? Math.max(...allWorkout.map(workout => workout.day)) : 1;
         setAllday(maxDay);
         setProgram(result);
       } catch (err) {
         console.log(err);
       }
     };
-
+  
     if (programDetail?.authorId) {
       fetchProgram();
     }
   }, [programDetail]);
+  
 
 
   const hdlRemoveExercise = async (id) => {
@@ -122,6 +123,7 @@ export default function Program() {
   };
 
   const hdlAddDay = (n) => {
+    console.log("ADD DAY",n);
     if (allday + n <= 0) {
       return;
     }

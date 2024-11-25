@@ -19,6 +19,8 @@ const ProtectRoute = ({ element, allow }) => {
       // const resp = await currentUser(token);
       // console.log(resp);
       const role = token ? user.role : "GUEST"
+      console.log("authen",role)
+      console.log("allow",allow)
       if (allow.includes(role)) {
         setIsAllowed(true);
       } else {

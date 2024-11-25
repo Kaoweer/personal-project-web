@@ -99,22 +99,20 @@ export default function AllProgram() {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-4 w-full h-full justify-between">
+        <div className="grid grid-cols-3 gap-4 w-full">
           {programs.map((item) => {
             const tags = JSON.parse(item.tags);
-            console.log(tags,item.tags,"THISIS ITEM")
             return (
-              <>
-                <ProgramCard
-                  className={"h-[300px] w-[300px] aspect-square"}
-                  id={item.id}
-                  hdlClickProgram={hdlClickProgram}
-                  name={item.name}
-                  author={item.author.username}
-                  image = {item.image}
-                  tags={tags}
-                />
-              </>
+              <ProgramCard
+                key={item.id}
+                className={"h-[300px] w-full"}
+                id={item.id}
+                hdlClickProgram={hdlClickProgram}
+                name={item.name}
+                author={item.author.username}
+                image={item.image}
+                tags={tags}
+              />
             );
           })}
         </div>
@@ -124,7 +122,7 @@ export default function AllProgram() {
               type="button"
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
               onClick={(e) => {
-                e.target.closest("dialog").close()
+                e.target.closest("dialog").close();
               }}
             >
               ✕
