@@ -41,18 +41,22 @@ const useProgramStore = create((set, get) => ({
     const response = await axios.get(`${URL}/program/get/${programId}`)
     return response
   },
-  getProgram : async (programId,query) => {
-    console.log(programId,query)
-    const {URL} = get()
+  getProgram: async (programId, query) => {
+    const { URL } = get()
     try {
       const response = await axios.get(
         `${URL}/program/${programId}?${query}`
       );
-        return response.data.sort((a, b) => a.orderPriority - b.orderPriority)
+      console.log(response)
+      return {
+        totalDays : response.data.totalDays,
+        programList: response.data.programList.sort((a, b) => a.orderPriority - b.orderPriority)
+      }
     } catch (err) {
       console.log(err);
     }
   },
+  
   updateProgram : async(workoutArray,programId) => {
     console.log(workoutArray,programId)
     const {URL} = get()

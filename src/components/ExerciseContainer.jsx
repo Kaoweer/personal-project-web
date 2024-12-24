@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import useProgramStore from "../stores/programStore";
 
 export default function ExerciseContainer(props) {
-  const { setProgram,day } = props;
+  const { setProgram, day, refreshProgramList } = props;
   const getExercise = useExerciseStore((state) => state.getExercise);
   const { programId } = useParams();
   const addExercise = useProgramStore((state) => state.addExercise);
@@ -61,11 +61,8 @@ export default function ExerciseContainer(props) {
                     className="btn rounded-full border border-primary text-lg text-white w-[10px] h-[10px]"
                     onClick={async () => {
                       await addExercise(programId, item.id,`day=${day}`);
-                      const addedExercise = await getProgram(programId);
-                      const newProgram = await getProgram(programId,`day=${day}`)
-                      console.log(newProgram)
-                      setProgram(newProgram);
-                      console.log();
+                      await refreshProgramList();
+                      document.getElementById("exercise-modal").close();
                     }}
                   >
                     +

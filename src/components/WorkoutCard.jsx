@@ -42,26 +42,21 @@ export default function WorkoutCard(props) {
   }, [exerciseDetail]);
 
   const hdlEditCard = async (e) => {
-    if (e.target.value == 0) {
-      return;
-    }
-    console.log(index);
+    if (!Array.isArray(program)) return;
+    
     const editingProgram = [...program];
     editingProgram[index][e.target.name] = e.target.value;
-
+  
+    setProgram(editingProgram);
+    
     if (debounceTimeout) clearTimeout(debounceTimeout);
-
-    // Set a new timeout to update the program after 500ms of inactivity
     setDebounceTimeout(
       setTimeout(() => {
-        setProgram(editingProgram);
         updateProgram(editingProgram, programId);
       }, 500)
     );
-
-    setProgram(editingProgram);
-    console.log(program);
   };
+  
 
   return (
     <div className="bg-white rounded-xl overflow-hidden transition-all hover:bg-slate-100">
