@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProgramCard from "../../components/ProgramCard";
@@ -8,25 +7,54 @@ import useAuthStore from "../../stores/authStore";
 
 export default function AllProgram() {
   const [programs, setPrograms] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(9);
+  const [isLoading, setIsLoading] = useState(true);
+
   const navigate = useNavigate();
   const getAllProgram = useProgramStore((state) => state.getAllProgram);
   const token = useAuthStore((state) => state.token);
 
   useEffect(() => {
     const fetchProgram = async () => {
+      setIsLoading(true);
       try {
-        const allProgram = await getAllProgram();
-        setPrograms(allProgram.data);
-        console.log(programs);
+        const result = await getAllProgram(currentPage, itemsPerPage);
+        setPrograms(result.data.data);
+        setTotalPages(result.data.pagination.totalPages);
+        setTotalItems(result.data.pagination.totalItems);
+        setItemsPerPage(result.data.pagination.itemsPerPage);
       } catch (err) {
-        console.log(err);
+        console.log("Error fetching programs:", err);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchProgram();
-  }, []);
+  }, [currentPage, itemsPerPage]);
 
   const hdlClickProgram = (programId) => {
     navigate(`${programId}`);
+  };
+
+  const renderPaginationButtons = () => {
+    const buttons = [];
+    for (let i = 1; i <= totalPages; i++) {
+      buttons.push(
+        <button
+          key={i}
+          onClick={() => setCurrentPage(i)}
+          className={`btn btn-circle ${
+            currentPage === i ? "btn-primary" : "btn-ghost"
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+    return buttons;
   };
 
   return (
@@ -36,10 +64,10 @@ export default function AllProgram() {
           <div className="flex py-4 items-center justify-between">
             <div className="flex">
               <h1 className="text-5xl font-bold text-primary">
-                Public programs {programs.length}
+                Public programs {totalItems}
               </h1>
             </div>
-            {token ? (
+            {token && (
               <button
                 className="text-lg btn btn-primary rounded-full bg-transparent border-2"
                 onClick={() =>
@@ -48,74 +76,58 @@ export default function AllProgram() {
               >
                 + Add your program
               </button>
-            ) : (
-              <></>
             )}
           </div>
+        </div>
 
-          <div className="flex gap-2 items-center">
-            <div className="dropdown">
-              <div
-                tabIndex={0}
-                role="button"
-                className="text-sm btn m-1 bg-transparent border-transparent rounded-full"
-              >
-                Equipment
-              </div>
-              <ul
-                tabIndex={0}
-                className=" dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-              >
-                <li>
-                  <a>Body only</a>
-                </li>
-              </ul>
-            </div>
-            <div className="dropdown">
-              <div
-                tabIndex={0}
-                role="button"
-                className="text-sm  btn m-1 bg-transparent border-transparent rounded-full"
-              >
-                Level
-              </div>
-              <ul
-                tabIndex={0}
-                className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-              >
-                <li>
-                  <a>Body only</a>
-                </li>
-              </ul>
-            </div>
-            <input
-              type="text"
-              placeholder="Type here"
-              className="input input-bordered text-sm w-full rouded-full p-2 h-fit"
-            />
-            <button className="text-sm btn btn-neutral rounded-full bg-transparent border-1">
-              Search
-            </button>
+        {isLoading ? (
+          <div className="flex justify-center items-center h-[400px]">
+            <span className="loading loading-spinner loading-lg"></span>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-3 gap-x-1 gap-y-2 w-full min-h-[400px]">
+              {Array.isArray(programs) &&
+                programs.map((item) => (
+                  <ProgramCard
+                    key={item.id}
+                    className={"h-[250px] w-full"}
+                    id={item.id}
+                    hdlClickProgram={hdlClickProgram}
+                    name={item.name}
+                    author={item.author.username}
+                    image={item.image}
+                    tags={item.tags}
+                  />
+                ))}
+            </div>
 
-        <div className="grid grid-cols-3 gap-4 w-full">
-          {programs.map((item) => {
-            const tags = JSON.parse(item.tags);
-            return (
-              <ProgramCard
-                key={item.id}
-                className={"h-[300px] w-full"}
-                id={item.id}
-                hdlClickProgram={hdlClickProgram}
-                name={item.name}
-                author={item.author.username}
-                image={item.image}
-                tags={tags}
-              />
-            );
-          })}
-        </div>
+            {totalPages > 1 && (
+              <div className="flex justify-center gap-2 my-8">
+                <button
+                  className="btn btn-circle btn-ghost"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                >
+                  «
+                </button>
+                {renderPaginationButtons()}
+                <button
+                  className="btn btn-circle btn-ghost"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                >
+                  »
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
         <dialog id="create-modal" className="modal">
           <div className="modal-box max-w-[700px]">
             <button

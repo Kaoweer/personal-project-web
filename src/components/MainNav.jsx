@@ -15,7 +15,7 @@ const MainNav = () => {
         <div>
           <ul className="flex gap-4 font-normal items-center">
             <Link to={"/program"}>Program</Link>
-            <Link to={"/program"}>Exercise</Link>
+            {/* <Link to={"/program"}>Exercise</Link> */}
             {token && user.role === "ADMIN" ? (
               <Link
                 className="btn rounded-full bg-transparent"

@@ -8,9 +8,9 @@ export default function ProgramCard(props) {
   return (
     <div className={className}>
       <div
-        className="shadow-md cursor-pointer overflow-hidden bg-black border rounded-xl"
+        className="shadow-md cursor-pointer overflow-hidden bg-black border rounded-xl max-w-[250px]"
         onClick={() => hdlClickProgram(id)}
-        style={{ aspectRatio: "1 / 1" }} // Ensures the card is square
+        style={{ aspectRatio: "1 / 1" }}
       >
         <div className="relative flex items-center h-full w-full">
           <img
@@ -23,24 +23,24 @@ export default function ProgramCard(props) {
           />
           <div className="absolute inset-0 flex flex-col justify-center p-4">
             <div>
-              <h1 className="text-center text-3xl transition-all text-white font-bold">
+              <h1 className="text-center text-xl transition-all text-white font-bold">
                 {name}
               </h1>
               <div className="flex w-full justify-center hover:scale-110 hover:font-bold hover:text-primary transition-all">
                 <Link
                   to={`/profile/`}
-                  className="mx-auto text-center font-extralight text-white text-lg"
+                  className="mx-auto text-center font-extralight text-white text-sm"
                 >
                   By {author}
                 </Link>
               </div>
 
               {Array.isArray(tags) && tags.length > 0 ? (
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-1 flex-wrap">
                   {tags.map((el, index) => (
                     <div
                       key={index}
-                      className="text-center bg-primary p-2 w-fit mx-auto text-xs font-bold py-1 text-white rounded-full"
+                      className="text-center bg-primary p-1 w-fit mx-auto text-[10px] font-bold text-white rounded-full"
                     >
                       {el}
                     </div>
