@@ -2,7 +2,16 @@ import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function ProgramCard(props) {
-  const { id, name, author, image, tags, hdlClickProgram, className } = props;
+  const {
+    id,
+    name,
+    author,
+    image,
+    tags,
+    authorId,
+    hdlClickProgram,
+    className,
+  } = props;
   const navigate = useNavigate();
 
   return (
@@ -28,26 +37,25 @@ export default function ProgramCard(props) {
               </h1>
               <div className="flex w-full justify-center hover:scale-110 hover:font-bold hover:text-primary transition-all">
                 <Link
-                  to={`/profile/`}
+                  to={`/profile/${authorId}`}
                   className="mx-auto text-center font-extralight text-white text-sm"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   By {author}
                 </Link>
               </div>
 
-              {Array.isArray(tags) && tags.length > 0 ? (
+              {Array.isArray(tags) && tags.length > 0 && (
                 <div className="flex gap-1 flex-wrap">
-                  {tags.map((el, index) => (
+                  {tags.map((tag, index) => (
                     <div
                       key={index}
                       className="text-center bg-primary p-1 w-fit mx-auto text-[10px] font-bold text-white rounded-full"
                     >
-                      {el}
+                      {typeof tag === "object" ? tag.name : tag}
                     </div>
                   ))}
                 </div>
-              ) : (
-                <></>
               )}
             </div>
           </div>

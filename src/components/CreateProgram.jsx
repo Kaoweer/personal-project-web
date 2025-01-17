@@ -8,50 +8,63 @@ export default function CreateProgram(props) {
   const { setPrograms } = props;
   const initialState = {
     name: "",
-    tags:[],
-    detail : ""
-  }
+    tags: [],
+    detail: "",
+  };
   const [programDetail, setProgramDetail] = useState(initialState);
   const createProgram = useProgramStore((state) => state.createProgram);
   const getAllProgram = useProgramStore((state) => state.getAllProgram);
-  const [file,setFile] = useState(null)
+  const [file, setFile] = useState(null);
   const { token } = useAuthStore.getState(null);
   const [tags, setTags] = useState({
     equipment: "",
     level: "",
     goal: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const hdlOnchange = (e) => {
     // console.log(programDetail)
     setProgramDetail({ ...programDetail, [e.target.name]: e.target.value });
   };
-  
-  const hdlFileChange = e => {
-    console.log(e.target.files)
-    setFile(e.target.files[0])
-  }
+
+  const hdlFileChange = (e) => {
+    console.log(e.target.files);
+    setFile(e.target.files[0]);
+  };
 
   const clearState = () => {
-    setFile(null)
-    setProgramDetail(initialState)
-  }
+    setFile(null);
+    setProgramDetail(initialState);
+  };
 
   const hdlCreateProgram = async (e) => {
-    console.log("runs")
-    e.preventDefault()
-    let tagArray = Object.values(tags)
-    const updatedProgramDetail = { ...programDetail, tags: tagArray };
-    const newProgram = await createProgram(token, programDetail.name,JSON.stringify(tagArray),programDetail.detail,file);
-    const allProgram = await getAllProgram();
-    if(!programDetail.name){
-      alert("Please fill your program's name")
-      return
+    e.preventDefault();
+    if (!programDetail.name) {
+      alert("Please fill your program's name");
+      return;
     }
-    
-    clearState()
-    navigate(`/program/${newProgram.data.id}`);
-    setPrograms(allProgram.data);
+
+    setIsLoading(true);
+    try {
+      let tagArray = Object.values(tags);
+      const updatedProgramDetail = { ...programDetail, tags: tagArray };
+      const newProgram = await createProgram(
+        token,
+        programDetail.name,
+        JSON.stringify(tagArray),
+        programDetail.detail,
+        file
+      );
+      const allProgram = await getAllProgram();
+      clearState();
+      navigate(`/program/${newProgram.data.id}`);
+      setPrograms(allProgram.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const hdlSelectTag = (e) => {
@@ -72,10 +85,18 @@ export default function CreateProgram(props) {
           <div className="flex h-[200px] w-[200px] flex-col p-2 pb-0">
             <img
               className="h-full w-full object-cover"
-              src={!file ? "https://workoutlabs.com/fit/wp-content/uploads/2017/03/bodyweight-buff-no-equipment-muscle-builder-workout.jpg" : URL.createObjectURL(file)}
+              src={
+                !file
+                  ? "https://workoutlabs.com/fit/wp-content/uploads/2017/03/bodyweight-buff-no-equipment-muscle-builder-workout.jpg"
+                  : URL.createObjectURL(file)
+              }
               alt=""
             />
-            <input onChange={hdlFileChange} type="file" className="h-fit file-input file-input-ghost w-full max-w-xs" />
+            <input
+              onChange={hdlFileChange}
+              type="file"
+              className="h-fit file-input file-input-ghost w-full max-w-xs"
+            />
           </div>
           <div className="flex w-full flex-col gap-2 p-2">
             <input
@@ -205,9 +226,21 @@ export default function CreateProgram(props) {
             </div>
 
             <div className="w-full flex gap-2">
-              <button className="btn flex-1" onClick={hdlCreateProgram}>
-                Create Program
+              <button
+                className="btn flex-1"
+                onClick={hdlCreateProgram}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <span className="loading loading-spinner"></span>
+                    Creating...
+                  </>
+                ) : (
+                  "Create Program"
+                )}
               </button>
+
               <button className="btn flex-1">Cancel</button>
             </div>
           </form>

@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 
 export default function UserHomePage() {
   const user = useAuthStore((state) => state.user);
+  const setUser = useAuthStore((state) => state.setUser); // Add this line to get setUser from auth store
   const navigate = useNavigate();
   const [selectStatus, setSelectStatus] = useState({
     PUBLIC: "active",
@@ -14,29 +15,30 @@ export default function UserHomePage() {
     PERSONAL: "",
   });
   const [curStatus, setCurStatus] = useState("PUBLIC");
-  const getPersonalProgram = useProgramStore((state) => state.getPersonalProgram);
+  const getPersonalProgram = useProgramStore(
+    (state) => state.getPersonalProgram
+  );
   const getRequests = useProgramStore((state) => state.getRequests);
   const { token } = useAuthStore.getState();
   const [personalPrograms, setPersonalPrograms] = useState([]);
   const [allRequests, setAllRequests] = useState([]);
   const allowRequest = useProgramStore((state) => state.allowRequest);
-  const deleteProgram = useProgramStore(state => state.deleteProgram)
+  const deleteProgram = useProgramStore((state) => state.deleteProgram);
 
-  const hdlDelete = async(programId) => {
+  const hdlDelete = async (programId) => {
     try {
-      await deleteProgram(programId)
-      fetchData()
-      toast.success("Deleted successfully")
+      await deleteProgram(programId);
+      fetchData();
+      toast.success("Deleted successfully");
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-
-  }
+  };
 
   const hdlClickProgram = (programId) => {
     navigate(`/program/${programId}`);
   };
-  
+
   const fetchUserData = async () => {
     try {
       const response = await fetch(`http://localhost:8000/profile/${user.id}`, {
@@ -45,7 +47,8 @@ export default function UserHomePage() {
         },
       });
       const data = await response.json();
-      console.log(data);
+      // Update the auth store with fresh user data
+      setUser(data);
     } catch (error) {
       console.log(error);
     }
@@ -53,7 +56,7 @@ export default function UserHomePage() {
 
   const fetchData = async () => {
     const personalPrograms = await getPersonalProgram(token);
-    console.log(personalPrograms)
+    console.log(personalPrograms);
     setPersonalPrograms(personalPrograms);
     const requests = await getRequests(token);
     setAllRequests(requests);
@@ -70,7 +73,12 @@ export default function UserHomePage() {
   };
 
   const toggleAccess = async (programId, userId, currentStatus) => {
-    const updatedRequest = await allowRequest(token, programId, userId,!currentStatus);
+    const updatedRequest = await allowRequest(
+      token,
+      programId,
+      userId,
+      !currentStatus
+    );
     if (updatedRequest) {
       // Update the local state for the request status
       setAllRequests((prevRequests) =>
@@ -85,8 +93,8 @@ export default function UserHomePage() {
 
   useEffect(() => {
     fetchData();
-    fetchUserData()
-  }, []);
+    fetchUserData();
+  }, [user.id]);
 
   return (
     <div className="w-full">
@@ -127,13 +135,23 @@ export default function UserHomePage() {
                     return null;
                   }
                   return (
-                    <div key={item.id} className="flex-shrink-0 w-auto flex flex-col gap-2 items-center">
+                    <div
+                      key={item.id}
+                      className="flex-shrink-0 w-auto flex flex-col gap-2 items-center"
+                    >
                       <ProgramCard
                         className={"w-[200px] h-[200px]"}
                         hdlClickProgram={() => hdlClickProgram(item.id)}
                         name={item.name}
+                        image={item.image}
+                        author={item.author}
                       />
-                      <button onClick={() => hdlDelete(item.id)} className="btn btn-xs w-2/3 rounded-full bg-none">Delete</button>
+                      <button
+                        onClick={() => hdlDelete(item.id)}
+                        className="btn btn-xs w-2/3 rounded-full bg-none"
+                      >
+                        Delete
+                      </button>
                     </div>
                   );
                 })}
@@ -142,7 +160,7 @@ export default function UserHomePage() {
           </div>
         </div>
         <div className="w-full">
-          <div className="w-full collapse bg-base-100">
+          {/* <div className="w-full collapse bg-base-100">
             <input type="checkbox" />
             <div className="collapse-title text-xl font-medium">
               <h1 className="text-2xl font-bold">Saved programs</h1>
@@ -190,7 +208,7 @@ export default function UserHomePage() {
                 })}
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="flex flex-col gap-4 p-4">
@@ -211,7 +229,9 @@ export default function UserHomePage() {
               <input
                 type="checkbox"
                 checked={el.isAllowed} // Set the checkbox based on isAllowed from the backend
-                onChange={() => toggleAccess(el.programId, el.userId, el.isAllowed)}
+                onChange={() =>
+                  toggleAccess(el.programId, el.userId, el.isAllowed)
+                }
                 className="toggle my-auto"
               />
               <h1 className="btn btn-sm btn-circle btn-ghost my-auto cursor-pointer">

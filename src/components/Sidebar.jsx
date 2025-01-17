@@ -1,17 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useAuthStore from "../stores/authStore";
 import { button } from "framer-motion/client";
 import VerifyContainer from "./VerifyContainer";
+import useProfileStore from "../stores/profileStore";
 
 export default function Sidebar() {
   const user = useAuthStore((state) => state.user);
+  const getUserProfile = useProfileStore((state) => state.getUserProfile);
+  const userProfile = useProfileStore((state) => state.userProfile);
   const [file, setFile] = useState(null);
   const [image, setImage] = useState(null);
 
-  const hdlFileChange = e => {
-    console.log(e.target.files)
-    setFile(e.target.files[0])
-  }
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user?.id) {
+        await getUserProfile(user.id);
+      }
+    };
+    fetchUserData();
+  }, [user?.role]); // Add role as dependency to re-fetch when role changes
+
+  const hdlFileChange = (e) => {
+    console.log(e.target.files);
+    setFile(e.target.files[0]);
+  };
 
   return (
     <div>
@@ -45,10 +57,10 @@ export default function Sidebar() {
           </div>
           <div className="flex justify-between border-b-2 border-primary">
             <div>Role</div>
-            <div>{user.role}</div>
+            <div>{userProfile?.role || user?.role}</div>
           </div>
           <div className="text-center mt-2">
-            {user.role == "TRAINER" ? (
+            {userProfile?.role == "TRAINER" ? (
               <></>
             ) : (
               <button
@@ -70,13 +82,19 @@ export default function Sidebar() {
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
             onClick={(e) => {
               e.target.closest("dialog").close();
-              setFile(null)
-              setImage(null)
+              setFile(null);
+              setImage(null);
             }}
           >
             ✕
           </button>
-          <VerifyContainer file={file} setFile={setFile} setImage={setImage} hdlFileChange = {hdlFileChange} image={image} />
+          <VerifyContainer
+            file={file}
+            setFile={setFile}
+            setImage={setImage}
+            hdlFileChange={hdlFileChange}
+            image={image}
+          />
         </div>
       </dialog>
     </div>

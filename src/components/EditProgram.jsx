@@ -19,26 +19,30 @@ export default function EditProgram(props) {
     level: "",
     goal: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (programData && programData.tags) {
       try {
         // First parse attempt
-        const parsedTags = typeof programData.tags === 'string' 
-          ? JSON.parse(programData.tags) 
-          : programData.tags;
-        
+        const parsedTags =
+          typeof programData.tags === "string"
+            ? JSON.parse(programData.tags)
+            : programData.tags;
+
         // Second parse if needed
-        const tagsArray = Array.isArray(parsedTags) 
-          ? parsedTags 
-          : (typeof parsedTags === 'string' ? JSON.parse(parsedTags) : []);
-  
+        const tagsArray = Array.isArray(parsedTags)
+          ? parsedTags
+          : typeof parsedTags === "string"
+          ? JSON.parse(parsedTags)
+          : [];
+
         setProgramDetail({
           name: programData.name || "",
           tags: parsedTags || [],
           detail: programData.detail || "",
         });
-  
+
         setTags({
           equipment: tagsArray[0] || "",
           level: tagsArray[1] || "",
@@ -59,8 +63,6 @@ export default function EditProgram(props) {
       }
     }
   }, [programData]);
-  
-
 
   const hdlOnchange = (e) => {
     setProgramDetail({ ...programDetail, [e.target.name]: e.target.value });
@@ -71,16 +73,16 @@ export default function EditProgram(props) {
   };
 
   const clearState = () => {
-    console.log(tags)
+    console.log(tags);
     setFile(null);
     setProgramDetail({
       name: programData.name || "",
       tags: programData.tags || [],
       detail: programData.detail || "",
     });
-    
+
     // Parse and set the original tags from programData
-    const parsedTags = JSON.parse(programData.tags || '[]');
+    const parsedTags = JSON.parse(programData.tags || "[]");
     setTags({
       equipment: parsedTags[0] || "",
       level: parsedTags[1] || "",
@@ -90,15 +92,23 @@ export default function EditProgram(props) {
 
   const hdlEditDetail = async (e) => {
     e.preventDefault();
-    let tagArray = Object.values(tags);
-    const updatedProgramDetail = {
-      ...programDetail,
-      tags: JSON.stringify(tagArray),
-    };
+    setIsLoading(true);
+    try {
+      let tagArray = Object.values(tags);
+      const updatedProgramDetail = {
+        ...programDetail,
+        tags: JSON.stringify(tagArray),
+      };
 
-    await editProgram(token, updatedProgramDetail, programId, file);
-    await fetchProgramDetail();
-    clearState();
+      await editProgram(token, updatedProgramDetail, programId, file);
+      await fetchProgramDetail();
+      clearState();
+      e.target.closest("dialog").close();
+    } catch (error) {
+      console.error("Error updating program:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const hdlSelectTag = (e) => {
@@ -112,7 +122,7 @@ export default function EditProgram(props) {
     return <div>Loading...</div>;
   }
 
-  const parsedTags = JSON.parse(programData.tags || '[]');
+  const parsedTags = JSON.parse(programData.tags || "[]");
 
   return (
     <div>
@@ -263,15 +273,23 @@ export default function EditProgram(props) {
             </div>
 
             <div className="w-full flex gap-2">
-              <button className="btn flex-1" onClick={hdlEditDetail}>
-                Edit Program
+              <button
+                className="btn flex-1"
+                onClick={hdlEditDetail}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <span className="loading loading-spinner"></span>
+                ) : (
+                  "Edit Program"
+                )}
               </button>
               <button
                 className="btn flex-1 "
                 onClick={(e) => {
                   e.preventDefault();
                   e.target.closest("dialog").close();
-                  clearState()
+                  clearState();
                 }}
               >
                 Cancel

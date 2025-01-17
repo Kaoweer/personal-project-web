@@ -97,7 +97,7 @@ export default function ProgramHeader({
             </div>
 
             <div>
-              <div className="block w-[200px] mx-auto dropdown">
+              <div className="block w-[300px] mx-auto dropdown">
                 <div className="flex border-b-2">
                   <div
                     tabIndex={0}

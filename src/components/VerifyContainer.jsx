@@ -5,19 +5,24 @@ import useVerifyStore from "../stores/verifyStore";
 
 export default function VerifyContainer(props) {
   const { file, image, hdlFileChange, setFile, setImage } = props;
+  const [isLoading, setIsLoading] = useState(false);
   const token = useAuthStore(state => state.token)
   const uploadVerify = useVerifyStore(state => state.uploadVerify)
 
   const hdlSubmit = async(e) => {
     try {
-      e.target.closest("dialog").close();
+      setIsLoading(true);
+      await uploadVerify(file);
       setFile(null);
       setImage(null);
-      uploadVerify(file)
+      e.target.closest("dialog").close();
+      toast.success("Verification submitted successfully");
     } catch (error) {
-      console.log(error)
+      toast.error("Failed to submit verification");
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
-
   }
 
   return (
@@ -33,10 +38,14 @@ export default function VerifyContainer(props) {
         />
         {file && <img src={URL.createObjectURL(file)} alt="" />}
         <div className="flex gap-2">
-          <button className="btn btn-primary flex-1" onClick={hdlSubmit}>Submit</button>
-          <button
-            className="btn flex-1"
+          <button 
+            className={`btn btn-primary flex-1 ${isLoading ? 'loading' : ''}`} 
+            onClick={hdlSubmit}
+            disabled={isLoading || !file}
           >
+            {isLoading ? 'Submitting...' : 'Submit'}
+          </button>
+          <button className="btn flex-1">
             Cancel
           </button>
         </div>

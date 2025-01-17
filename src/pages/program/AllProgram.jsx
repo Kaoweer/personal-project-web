@@ -96,8 +96,9 @@ export default function AllProgram() {
                     hdlClickProgram={hdlClickProgram}
                     name={item.name}
                     author={item.author.username}
+                    authorId={item.authorId}
                     image={item.image}
-                    tags={item.tags}
+                    tags={JSON.parse(item.tags)}
                   />
                 ))}
             </div>
