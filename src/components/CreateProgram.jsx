@@ -38,12 +38,12 @@ export default function CreateProgram(props) {
   }
 
   const hdlCreateProgram = async (e) => {
+    console.log("runs")
     e.preventDefault()
     let tagArray = Object.values(tags)
     const updatedProgramDetail = { ...programDetail, tags: tagArray };
     const newProgram = await createProgram(token, programDetail.name,JSON.stringify(tagArray),programDetail.detail,file);
     const allProgram = await getAllProgram();
-
     if(!programDetail.name){
       alert("Please fill your program's name")
       return

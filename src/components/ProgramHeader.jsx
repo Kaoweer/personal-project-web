@@ -116,12 +116,20 @@ export default function ProgramHeader({
                     <div className="text-center w-full">
                       <div className="flex gap-1">
                         {program.length > 0 && (
-                          <a
-                            className="btn flex-1"
-                            onClick={() => hdlAddDay(1)}
-                          >
-                            Add
-                          </a>
+                          <>
+                            <a
+                              className="btn flex-1"
+                              onClick={() => hdlAddDay(1)}
+                            >
+                              Add
+                            </a>
+                            <a
+                              className="btn flex-1"
+                              onClick={() => hdlAddDay(5)}
+                            >
+                              Add 5 days
+                            </a>
+                          </>
                         )}
                         <a
                           className="btn flex-1"
